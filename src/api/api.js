@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = 'https://lottery-be.onrender.com/api';
 
 export const submitTicket = async (formData) => {
     const res = await fetch(`${BASE_URL}/tickets/tickets`, {
