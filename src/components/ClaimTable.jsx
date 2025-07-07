@@ -11,7 +11,7 @@ export default function ClaimAdminTable({ token }) {
     useEffect(() => {
         const fetchClaims = async () => {
             try {
-                const res = await fetch('https://lottery-be.onrender.com/api/admin/claims', {
+                const res = await fetch('https://api.lottery.tenderbaba.com/api/admin/claims', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

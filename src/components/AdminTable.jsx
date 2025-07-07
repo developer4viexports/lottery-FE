@@ -9,7 +9,7 @@ export default function AdminTable({ token }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [previewUrl, setPreviewUrl] = useState(null);
 
-    const FILE_BASE_URL = 'https://lottery-be.onrender.com';
+    const FILE_BASE_URL = 'https://api.lottery.tenderbaba.com';
 
     useEffect(() => {
         const fetchTickets = async () => {

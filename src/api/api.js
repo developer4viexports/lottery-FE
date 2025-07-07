@@ -1,5 +1,5 @@
 // src/api/api.js
-const BASE_URL = 'https://lottery-be.onrender.com/api';
+const BASE_URL = 'https://api.lottery.tenderbaba.com/api';
 
 
 export const submitTicket = async (formData) => {
