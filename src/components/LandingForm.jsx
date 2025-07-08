@@ -12,7 +12,10 @@ export default function LandingForm() {
         phone: '',
         email: '',
         instagram: '',
+        isSuperTicket: false,
         file: null,
+        purchaseProof: null,
+        followProof: null,
     });
 
     const [errors, setErrors] = useState({});
@@ -28,6 +31,7 @@ export default function LandingForm() {
 
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'Invalid email format';
         if (!/^@[\w.]+$/.test(form.instagram)) errs.instagram = 'Instagram must start with @ and use only letters, numbers, dot or underscore';
+        if (!form.followProof) errs.followProof = 'Follow proof is required';
 
         if (form.file) {
             const type = form.file.type;
@@ -41,11 +45,12 @@ export default function LandingForm() {
     };
 
     const handleChange = (e) => {
-        const { name, value, files } = e.target;
+        const { name, value, files, type, checked } = e.target;
         setForm(prev => ({
             ...prev,
-            [name]: files ? files[0] : value
+            [name]: type === 'checkbox' ? checked : (files ? files[0] : value)
         }));
+
         setErrors(prev => ({ ...prev, [name]: '' }));
     };
 
@@ -57,9 +62,23 @@ export default function LandingForm() {
         const expiryDate = '30-06-2025';
 
         const formData = new FormData();
-        Object.entries(form).forEach(([key, value]) => formData.append(key, value));
+
+        // Append regular fields
+        formData.append('name', form.name);
+        formData.append('phone', form.phone);
+        formData.append('email', form.email);
+        formData.append('instagram', form.instagram);
+        formData.append('isSuperTicket', form.isSuperTicket ? '1' : '0');
+
         formData.append('issueDate', issueDate);
         formData.append('expiryDate', expiryDate);
+
+        // Append file uploads only if present
+        if (form.file) formData.append('file', form.file);
+        if (form.followProof) formData.append('followProof', form.followProof);
+        if (form.isSuperTicket && form.purchaseProof) {
+            formData.append('purchaseProof', form.purchaseProof);
+        }
 
         try {
             const response = await submitTicket(formData);
@@ -81,6 +100,7 @@ export default function LandingForm() {
             }
         }
     };
+
 
     return (
         <div
@@ -141,7 +161,7 @@ export default function LandingForm() {
                     />
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Upload Proof</label>
+                        <label className="block text-sm font-medium text-gray-700">Upload Task Proof</label>
                         <input
                             type="file"
                             name="file"
@@ -152,11 +172,56 @@ export default function LandingForm() {
                         {errors.file && <p className="text-red-500 text-sm mt-1">{errors.file}</p>}
                     </div>
 
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Upload Proof That You Follow @Shrilalmahal
+                        </label>
+                        <input
+                            type="file"
+                            name="followProof"
+                            accept="image/*,video/*"
+                            onChange={handleChange}
+                            className="mt-1 block w-full text-sm text-gray-700"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">Screenshot of follow or story repost</p>
+                    </div>
+
+                    <div className="flex items-center">
+                        <input
+                            type="checkbox"
+                            id="isSuperTicket"
+                            name="isSuperTicket"
+                            checked={form.isSuperTicket}
+                            onChange={handleChange}
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <label htmlFor="isSuperTicket" className="ml-2 block text-sm text-gray-700">
+                            Have you bought from Shrialamahal Empire? (Get SuperTicket with better prizes)
+                        </label>
+                    </div>
+                    {form.isSuperTicket && (
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Upload Purchase Proof (Receipt/Order ID)
+                            </label>
+                            <input
+                                type="file"
+                                name="purchaseProof"
+                                accept="image/*,.pdf"
+                                onChange={handleChange}
+                                className="mt-1 block w-full text-sm text-gray-700"
+                                required={form.isSuperTicket}
+                            />
+                            <p className="text-xs text-gray-500 mt-1">
+                                Upload receipt or order confirmation from Shrialamahal Empire
+                            </p>
+                        </div>
+                    )}
                     <button
                         type="submit"
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition duration-200"
                     >
-                        Generate Ticket
+                        Generate {form.isSuperTicket ? 'SuperTicket' : 'Ticket'}
                     </button>
                 </form>
             </div>

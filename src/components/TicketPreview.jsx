@@ -16,11 +16,21 @@ export default function TicketPreview({ data }) {
         <div className="mt-10 text-center px-4">
             <div
                 ref={ref}
-                className="bg-white shadow-2xl border-4 border-yellow-400 rounded-xl px-6 py-6 max-w-md mx-auto font-mono relative"
+                className={`bg-white shadow-2xl border-4 ${data.isSuperTicket ? 'border-purple-600' : 'border-yellow-400'} rounded-xl px-6 py-6 max-w-md mx-auto font-mono relative`}
             >
-                <h2 className="text-center text-lg font-bold text-yellow-700 mb-2">
-                    🎉 SHRILALMAHAL LUCKY TICKET 🎉
+                <h2 className="text-center text-lg font-bold mb-2">
+                    {data.isSuperTicket ? (
+                        <span className="text-purple-700">✨ SHRILALMAHAL SUPER TICKET ✨</span>
+                    ) : (
+                        <span className="text-yellow-700">🎉 SHRILALMAHAL LUCKY TICKET 🎉</span>
+                    )}
                 </h2>
+
+                {data.isSuperTicket && (
+                    <div className="bg-purple-100 text-purple-800 text-sm p-2 rounded mb-3">
+                        🚀 SuperTicket - 2X Prize Value on Wins!
+                    </div>
+                )}
 
                 <div className="text-left space-y-1 text-sm sm:text-base">
                     <p><strong>Name:</strong> {data.name}</p>
@@ -37,8 +47,10 @@ export default function TicketPreview({ data }) {
                         {data.numbers.map((num, idx) => (
                             <span
                                 key={idx}
-                                className="bg-blue-100 border border-blue-400 text-blue-800 px-3 py-1 rounded-md shadow-sm text-sm flex items-center justify-center"
-
+                                className={`border px-3 py-1 rounded-md shadow-sm text-sm flex items-center justify-center ${data.isSuperTicket
+                                    ? 'bg-purple-100 border-purple-400 text-purple-800'
+                                    : 'bg-blue-100 border-blue-400 text-blue-800'
+                                    }`}
                             >
                                 {num}
                             </span>
@@ -52,6 +64,7 @@ export default function TicketPreview({ data }) {
                     <p>✅ Follow <strong>@shrilalmahalgroup</strong> on Instagram</p>
                     <p>✅ Comment your ticket number</p>
                     <p>✅ Share ticket in story & tag 5 friends</p>
+                    <p className="mt-2 text-red-600 font-medium">🔔 Make sure you’ve completed all tasks to claim your prize!</p>
                 </div>
             </div>
 

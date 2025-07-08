@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AdminTable from '../components/AdminTable';
 import ClaimTable from '../components/ClaimTable';
 import WinningTable from '../components/WinningTable';
+import WinningCombination from '../components/WinningCombination';
 import { loginAdmin } from '../api/api'; // 🔐 API call for login
 
 export default function AdminDashboard() {
@@ -103,6 +104,12 @@ export default function AdminDashboard() {
                     >
                         🏆 Winning Tickets
                     </button>
+                    <button
+                        onClick={() => setTab('combination')}
+                        className={`px-4 py-2 rounded font-medium ${tab === 'combination' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+                    >
+                        🔢 Winning Combination
+                    </button>
                 </div>
                 <button
                     onClick={handleLogout}
@@ -116,6 +123,7 @@ export default function AdminDashboard() {
                 {tab === 'tickets' && <AdminTable token={token} />}
                 {tab === 'claims' && <ClaimTable token={token} />}
                 {tab === 'winning' && <WinningTable token={token} />}
+                {tab === 'combination' && <WinningCombination token={token} />}
             </div>
         </div>
     );

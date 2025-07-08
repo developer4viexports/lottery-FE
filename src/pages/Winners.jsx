@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import bgImage from "../assets/image3.png";
-import { submitClaim, getWinningTickets } from "../api/api"; // include backend API
+import { submitClaim, getWinningTickets } from "../api/api";
+import PhoneInput from "react-phone-input-2";
+import 'react-phone-input-2/lib/style.css';
 
 export default function Winners() {
     const [form, setForm] = useState({
@@ -9,11 +11,13 @@ export default function Winners() {
         email: "",
         phone: "",
         instagram: "",
+        ticketImage: null,
+        proofImage: null,
     });
 
     const [errors, setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
-    const [winners, setWinners] = useState([]); // store backend data
+    const [winners, setWinners] = useState([]);
 
     useEffect(() => {
         getWinningTickets()
@@ -24,39 +28,50 @@ export default function Winners() {
             });
     }, []);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
-        setErrors((prev) => ({ ...prev, [name]: "" }));
-    };
-
     const validate = () => {
         const errs = {};
+        const cleanedPhone = form.phone.replace(/\D/g, '');
+
         if (!form.ticketID.trim()) errs.ticketID = "Ticket ID is required";
         if (!form.name.trim()) errs.name = "Name is required";
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-            errs.email = "Invalid email address";
-        if (!/^\d{10}$/.test(form.phone))
-            errs.phone = "Phone number must be exactly 10 digits";
-        if (!/^@[\w.]+$/.test(form.instagram))
-            errs.instagram = "Instagram must start with @ and contain only letters, numbers, dot or underscore";
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = "Invalid email";
+        if (cleanedPhone.length < 10 || cleanedPhone.length > 15) errs.phone = "Phone must include country code and be valid";
+        if (!/^@[\w.]+$/.test(form.instagram)) errs.instagram = "Instagram must start with @ and use only letters, numbers, dot or underscore";
+        if (!form.ticketImage) errs.ticketImage = "Ticket image is required";
+        if (!form.proofImage) errs.proofImage = "Proof of task is required";
 
         setErrors(errs);
         return Object.keys(errs).length === 0;
     };
 
+    const handleChange = (e) => {
+        const { name, value, files } = e.target;
+        setForm(prev => ({
+            ...prev,
+            [name]: files ? files[0] : value
+        }));
+        setErrors(prev => ({ ...prev, [name]: '' }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         if (!validate()) return;
 
+        const formData = new FormData();
+        Object.entries(form).forEach(([key, value]) => {
+            formData.append(key, value); // Includes text + File inputs
+        });
+
         try {
-            await submitClaim(form);
+            await submitClaim(formData);
             setSubmitted(true);
         } catch (error) {
             console.error("Submission error:", error);
             alert("Failed to submit claim. Please try again.");
         }
     };
+
 
     return (
         <section
@@ -100,12 +115,11 @@ export default function Winners() {
                     )}
                 </section>
 
-
-
                 {!submitted ? (
                     <form
                         onSubmit={handleSubmit}
                         className="bg-white shadow rounded-lg p-6 space-y-5"
+                        encType="multipart/form-data"
                     >
                         <h2 className="text-xl font-semibold mb-4 text-blue-700">
                             🎯 Claim Your Ticket
@@ -139,14 +153,22 @@ export default function Winners() {
                             error={errors.email}
                         />
 
-                        <InputField
-                            label="Phone"
-                            name="phone"
-                            placeholder="9876543210"
-                            value={form.phone}
-                            onChange={handleChange}
-                            error={errors.phone}
-                        />
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                            <PhoneInput
+                                country={'in'}
+                                value={form.phone}
+                                onChange={(phone) => setForm(prev => ({ ...prev, phone: `+${phone}` }))}
+                                inputProps={{
+                                    name: 'phone',
+                                    required: true,
+                                }}
+                                inputClass="!w-full !py-2 !pl-12 !pr-4 !border !rounded-md !shadow-sm focus:!ring focus:!ring-blue-300"
+                                containerClass="!w-full"
+                                buttonClass="!bg-gray-100 !border-r !border-gray-300"
+                            />
+                            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+                        </div>
 
                         <InputField
                             label="Instagram Handle"
@@ -156,6 +178,34 @@ export default function Winners() {
                             onChange={handleChange}
                             error={errors.instagram}
                         />
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Upload Ticket Screenshot (Required)
+                            </label>
+                            <input
+                                type="file"
+                                name="ticketImage"
+                                accept="image/*"
+                                onChange={handleChange}
+                                className="mt-1 block w-full text-sm text-gray-700"
+                            />
+                            {errors.ticketImage && <p className="text-red-500 text-sm mt-1">{errors.ticketImage}</p>}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Upload Proof of Task (Story/Post Screenshot)
+                            </label>
+                            <input
+                                type="file"
+                                name="proofImage"
+                                accept="image/*"
+                                onChange={handleChange}
+                                className="mt-1 block w-full text-sm text-gray-700"
+                            />
+                            {errors.proofImage && <p className="text-red-500 text-sm mt-1">{errors.proofImage}</p>}
+                        </div>
 
                         <button
                             type="submit"
@@ -167,9 +217,7 @@ export default function Winners() {
                 ) : (
                     <div className="bg-green-100 text-green-800 text-center p-6 rounded-md shadow">
                         <h3 className="text-xl font-semibold mb-2">🎉 Claim Submitted!</h3>
-                        <p>
-                            Our team will verify your details and reach out to you shortly.
-                        </p>
+                        <p>Our team will verify your details and reach out to you shortly.</p>
                     </div>
                 )}
             </div>
@@ -177,22 +225,10 @@ export default function Winners() {
     );
 }
 
-/* ───────────────────────────────────────────── */
-/* Reusable input with error */
-function InputField({
-    label,
-    name,
-    value,
-    onChange,
-    placeholder,
-    error,
-    type = "text",
-}) {
+function InputField({ label, name, value, onChange, placeholder, error, type = "text" }) {
     return (
         <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-                {label}
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
             <input
                 type={type}
                 name={name}

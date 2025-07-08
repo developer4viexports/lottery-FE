@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const BASE_URL = 'https://lottery-be.onrender.com/api';
+const BASE_URL = 'http://localhost:5000/api';
 
 export default function WinningTable({ token }) {
     const [winners, setWinners] = useState([]);

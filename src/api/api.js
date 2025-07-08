@@ -1,4 +1,4 @@
-const BASE_URL = 'https://lottery-be.onrender.com/api';
+const BASE_URL = 'http://localhost:5000/api';
 
 export const submitTicket = async (formData) => {
     const res = await fetch(`${BASE_URL}/tickets/tickets`, {
@@ -18,21 +18,23 @@ export const submitTicket = async (formData) => {
     return data;
 };
 
-export const submitClaim = async (data) => {
+export const submitClaim = async (formData) => {
     const res = await fetch(`${BASE_URL}/tickets/claims`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+        body: formData, // no headers needed!
     });
 
+    const data = await res.json();
+
     if (!res.ok) {
-        throw new Error('Failed to submit claim');
+        const error = new Error(data.message || 'Claim submission failed');
+        error.response = data;
+        throw error;
     }
 
-    return res.json();
+    return data;
 };
+
 
 export const getWinningTickets = async (token) => {
     const res = await fetch(`${BASE_URL}/winners`, {

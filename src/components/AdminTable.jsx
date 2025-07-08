@@ -1,3 +1,4 @@
+// src/components/AdminTable.jsx
 import React, { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
 
@@ -9,7 +10,7 @@ export default function AdminTable({ token }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [previewUrl, setPreviewUrl] = useState(null);
 
-    const FILE_BASE_URL = 'https://lottery-be.onrender.com';
+    const FILE_BASE_URL = 'http://localhost:5000';
 
     useEffect(() => {
         const fetchTickets = async () => {
@@ -101,8 +102,13 @@ export default function AdminTable({ token }) {
             Phone: ticket.phone,
             TicketID: ticket.ticketID,
             Numbers: parseNumbers(ticket.numbers).join(' '),
+            SuperTicket: ticket.isSuperTicket ? 'Yes' : 'No',
+            Prize: ticket.prizeType || '-',
+            Issued: ticket.issueDate,
+            Expiry: ticket.expiryDate,
             CreatedAt: formatDateTime(ticket.createdAt),
-            FileURL: ticket.proofImage ? FILE_BASE_URL + ticket.proofImage : ''
+            ProofImageURL: ticket.proofImage ? FILE_BASE_URL + ticket.proofImage : '',
+            PurchaseProofURL: ticket.purchaseProof ? FILE_BASE_URL + ticket.purchaseProof : ''
         }));
 
         const worksheet = XLSX.utils.json_to_sheet(formattedTickets);
@@ -156,6 +162,7 @@ export default function AdminTable({ token }) {
                 </div>
             )}
 
+            {/* Filters and Download */}
             <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4 mb-6">
                 <div className="flex flex-wrap gap-4 items-end">
                     <div>
@@ -196,8 +203,8 @@ export default function AdminTable({ token }) {
                 </button>
             </div>
 
-            {/* Desktop Table */}
-            <div className="hidden md:block overflow-x-auto">
+            {/* Table */}
+            <div className="overflow-x-auto">
                 <table className="min-w-full border text-sm">
                     <thead className="bg-gray-100 text-left">
                         <tr>
@@ -207,8 +214,14 @@ export default function AdminTable({ token }) {
                             <th className="p-2 border">Phone</th>
                             <th className="p-2 border">Ticket ID</th>
                             <th className="p-2 border">Numbers</th>
-                            <th className="p-2 border">Generated At</th>
-                            <th className="p-2 border">File</th>
+                            <th className="p-2 border">Super</th>
+                            <th className="p-2 border">Prize</th>
+                            <th className="p-2 border">Issued</th>
+                            <th className="p-2 border">Expiry</th>
+                            <th className="p-2 border">Proof</th>
+                            <th className="p-2 border">Follow Proof</th>
+                            <th className="p-2 border">Purchase Proof</th>
+                            <th className="p-2 border">Created At</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -220,51 +233,30 @@ export default function AdminTable({ token }) {
                                 <td className="p-2 border">{t.phone}</td>
                                 <td className="p-2 border">{t.ticketID}</td>
                                 <td className="p-2 border">{parseNumbers(t.numbers).join(' ')}</td>
-                                <td className="p-2 border">{formatDateTime(t.createdAt)}</td>
+                                <td className="p-2 border">{t.isSuperTicket ? 'Yes' : 'No'}</td>
+                                <td className="p-2 border">{t.prizeType || '-'}</td>
+                                <td className="p-2 border">{t.issueDate}</td>
+                                <td className="p-2 border">{t.expiryDate}</td>
                                 <td className="p-2 border">
                                     {t.proofImage ? (
-                                        <button
-                                            onClick={() => setPreviewUrl(FILE_BASE_URL + t.proofImage)}
-                                            className="text-blue-600 underline hover:text-blue-800"
-                                        >
-                                            View File
-                                        </button>
-                                    ) : (
-                                        <span className="text-gray-400 italic">No file</span>
-                                    )}
+                                        <button onClick={() => setPreviewUrl(FILE_BASE_URL + t.proofImage)} className="text-blue-600 underline hover:text-blue-800">View</button>
+                                    ) : <span className="text-gray-400 italic">No file</span>}
                                 </td>
+                                <td className="p-2 border">
+                                    {t.followProof ? (
+                                        <button onClick={() => setPreviewUrl(FILE_BASE_URL + t.followProof)} className="text-blue-600 underline hover:text-blue-800">View</button>
+                                    ) : <span className="text-gray-400 italic">No file</span>}
+                                </td>
+                                <td className="p-2 border">
+                                    {t.purchaseProof ? (
+                                        <button onClick={() => setPreviewUrl(FILE_BASE_URL + t.purchaseProof)} className="text-blue-600 underline hover:text-blue-800">View</button>
+                                    ) : <span className="text-gray-400 italic">No file</span>}
+                                </td>
+                                <td className="p-2 border">{formatDateTime(t.createdAt)}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-            </div>
-
-            {/* Mobile Cards */}
-            <div className="block md:hidden space-y-4">
-                {filteredTickets.map((t, i) => (
-                    <div key={i} className="bg-white rounded-lg shadow p-4 border">
-                        <p><strong>S. No:</strong> {i + 1}</p>
-                        <p><strong>Name:</strong> {t.name}</p>
-                        <p><strong>Email:</strong> {t.email}</p>
-                        <p><strong>Phone:</strong> {t.phone}</p>
-                        <p><strong>Ticket ID:</strong> {t.ticketID}</p>
-                        <p><strong>Numbers:</strong> {parseNumbers(t.numbers).join(' ')}</p>
-                        <p><strong>Generated At:</strong> {formatDateTime(t.createdAt)}</p>
-                        <p>
-                            <strong>File:</strong>{' '}
-                            {t.proofImage ? (
-                                <button
-                                    onClick={() => setPreviewUrl(FILE_BASE_URL + t.proofImage)}
-                                    className="text-blue-600 underline hover:text-blue-800"
-                                >
-                                    View File
-                                </button>
-                            ) : (
-                                <span className="text-gray-400 italic">No file</span>
-                            )}
-                        </p>
-                    </div>
-                ))}
             </div>
         </div>
     );

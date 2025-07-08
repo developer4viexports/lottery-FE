@@ -7,16 +7,18 @@ export default function ClaimAdminTable({ token }) {
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+    const [previewUrl, setPreviewUrl] = useState(null);
+
+    const FILE_BASE_URL = 'http://localhost:5000';
 
     useEffect(() => {
         const fetchClaims = async () => {
             try {
-                const res = await fetch('https://lottery-be.onrender.com/api/admin/claims', {
+                const res = await fetch(`${FILE_BASE_URL}/api/admin/claims`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-
                 const data = await res.json();
                 if (!res.ok || !data.success) throw new Error(data.message || 'Unauthorized');
                 setClaims(data.data || []);
@@ -42,6 +44,15 @@ export default function ClaimAdminTable({ token }) {
         });
     };
 
+    const getFileType = (url) => {
+        if (!url) return '';
+        const ext = url.split('.').pop().toLowerCase();
+        if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) return 'image';
+        if (['mp4', 'webm', 'ogg'].includes(ext)) return 'video';
+        if (ext === 'pdf') return 'pdf';
+        return 'other';
+    };
+
     const handleFilter = () => {
         const from = fromDate ? new Date(fromDate) : null;
         const to = toDate ? new Date(toDate) : null;
@@ -56,7 +67,8 @@ export default function ClaimAdminTable({ token }) {
                 claim.name +
                 claim.email +
                 claim.phone +
-                claim.instagram
+                claim.instagram +
+                claim.countryCode
             ).toLowerCase();
 
             return text.includes(searchTerm.toLowerCase());
@@ -71,12 +83,15 @@ export default function ClaimAdminTable({ token }) {
 
     const downloadExcel = () => {
         const formattedClaims = filteredClaims.map((claim, i) => ({
-            "S. No": i + 1,
+            'S. No': i + 1,
             TicketID: claim.ticketID,
             Name: claim.name,
             Email: claim.email,
             Phone: claim.phone,
+            CountryCode: claim.countryCode,
             Instagram: claim.instagram,
+            TicketImageURL: claim.ticketImage ? FILE_BASE_URL + claim.ticketImage : '',
+            ProofImageURL: claim.proofImage ? FILE_BASE_URL + claim.proofImage : '',
             SubmittedAt: formatDateTime(claim.createdAt),
         }));
 
@@ -88,6 +103,49 @@ export default function ClaimAdminTable({ token }) {
 
     return (
         <div className="p-6">
+            {previewUrl && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg w-full max-w-2xl p-4 shadow-lg relative">
+                        <button
+                            onClick={() => setPreviewUrl(null)}
+                            className="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-xl"
+                        >
+                            ×
+                        </button>
+                        <div className="h-96 flex justify-center items-center">
+                            {(() => {
+                                const type = getFileType(previewUrl);
+                                if (type === 'image') {
+                                    return <img src={previewUrl} alt="Preview" className="max-h-full max-w-full rounded shadow" />;
+                                } else if (type === 'video') {
+                                    return (
+                                        <video controls className="max-h-full max-w-full rounded shadow">
+                                            <source src={previewUrl} type="video/mp4" />
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    );
+                                } else if (type === 'pdf') {
+                                    return <iframe src={previewUrl} className="w-full h-full rounded" />;
+                                } else {
+                                    return <p className="text-gray-600">Preview not supported for this file type.</p>;
+                                }
+                            })()}
+                        </div>
+                        <div className="mt-4 text-right">
+                            <a
+                                href={previewUrl}
+                                download
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                            >
+                                Download
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4 mb-6">
                 <div>
                     <h2 className="text-xl font-bold mb-2">All Claim Submissions</h2>
@@ -131,8 +189,7 @@ export default function ClaimAdminTable({ token }) {
                 </button>
             </div>
 
-            {/* Desktop Table */}
-            <div className="hidden md:block overflow-x-auto">
+            <div className="overflow-x-auto">
                 <table className="min-w-full border text-sm">
                     <thead className="bg-gray-100 text-left">
                         <tr>
@@ -141,7 +198,10 @@ export default function ClaimAdminTable({ token }) {
                             <th className="p-2 border">Name</th>
                             <th className="p-2 border">Email</th>
                             <th className="p-2 border">Phone</th>
+                            <th className="p-2 border">Country</th>
                             <th className="p-2 border">Instagram</th>
+                            <th className="p-2 border">Ticket File</th>
+                            <th className="p-2 border">Proof File</th>
                             <th className="p-2 border">Submitted At</th>
                         </tr>
                     </thead>
@@ -153,27 +213,37 @@ export default function ClaimAdminTable({ token }) {
                                 <td className="p-2 border">{c.name}</td>
                                 <td className="p-2 border">{c.email}</td>
                                 <td className="p-2 border">{c.phone}</td>
+                                <td className="p-2 border">{c.countryCode || '-'}</td>
                                 <td className="p-2 border">{c.instagram}</td>
+                                <td className="p-2 border">
+                                    {c.ticketImage ? (
+                                        <button
+                                            onClick={() => setPreviewUrl(FILE_BASE_URL + c.ticketImage)}
+                                            className="text-blue-600 underline hover:text-blue-800"
+                                        >
+                                            View
+                                        </button>
+                                    ) : (
+                                        <span className="text-gray-400 italic">No file</span>
+                                    )}
+                                </td>
+                                <td className="p-2 border">
+                                    {c.proofImage ? (
+                                        <button
+                                            onClick={() => setPreviewUrl(FILE_BASE_URL + c.proofImage)}
+                                            className="text-blue-600 underline hover:text-blue-800"
+                                        >
+                                            View
+                                        </button>
+                                    ) : (
+                                        <span className="text-gray-400 italic">No file</span>
+                                    )}
+                                </td>
                                 <td className="p-2 border">{formatDateTime(c.createdAt)}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-            </div>
-
-            {/* Mobile Cards */}
-            <div className="block md:hidden space-y-4">
-                {filteredClaims.map((c, i) => (
-                    <div key={i} className="bg-white rounded-lg shadow p-4 border">
-                        <p><strong>S. No:</strong> {i + 1}</p>
-                        <p><strong>Ticket ID:</strong> {c.ticketID}</p>
-                        <p><strong>Name:</strong> {c.name}</p>
-                        <p><strong>Email:</strong> {c.email}</p>
-                        <p><strong>Phone:</strong> {c.phone}</p>
-                        <p><strong>Instagram:</strong> {c.instagram}</p>
-                        <p><strong>Submitted At:</strong> {formatDateTime(c.createdAt)}</p>
-                    </div>
-                ))}
             </div>
         </div>
     );
