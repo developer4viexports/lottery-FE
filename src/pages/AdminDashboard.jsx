@@ -3,6 +3,7 @@ import AdminTable from '../components/AdminTable';
 import ClaimTable from '../components/ClaimTable';
 import WinningTable from '../components/WinningTable';
 import WinningCombination from '../components/WinningCombination';
+import AllCompetitions from '../components/AllCompetitions';
 import { loginAdmin } from '../api/api'; // 🔐 API call for login
 
 export default function AdminDashboard() {
@@ -110,6 +111,13 @@ export default function AdminDashboard() {
                     >
                         🔢 Winning Combination
                     </button>
+                    <button
+                        onClick={() => setTab('all')}
+                        className={`px-4 py-2 rounded font-medium ${tab === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+                    >
+                        📋 All Competitions
+                    </button>
+
                 </div>
                 <button
                     onClick={handleLogout}
@@ -124,6 +132,8 @@ export default function AdminDashboard() {
                 {tab === 'claims' && <ClaimTable token={token} />}
                 {tab === 'winning' && <WinningTable token={token} />}
                 {tab === 'combination' && <WinningCombination token={token} />}
+                {tab === 'all' && <AllCompetitions token={token} />}
+
             </div>
         </div>
     );

@@ -16,7 +16,9 @@ export default function WinningCombination({ token }) {
         grandQuota: 1,
         silverQuota: 3,
         bronzeQuota: 5,
-        consolationQuota: 10
+        consolationQuota: 10,
+        startDate: '',
+        endDate: ''
     });
     const [currentCombination, setCurrentCombination] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -49,15 +51,16 @@ export default function WinningCombination({ token }) {
             ]);
 
             if (comboRes.ok && comboData.success) {
-                setCurrentCombination(comboData.data);
-                if (comboData.data) {
-                    setFormData({
-                        grandQuota: comboData.data.grandQuota,
-                        silverQuota: comboData.data.silverQuota,
-                        bronzeQuota: comboData.data.bronzeQuota,
-                        consolationQuota: comboData.data.consolationQuota
-                    });
-                }
+                const combo = comboData.data;
+                setCurrentCombination(combo);
+                setFormData({
+                    grandQuota: combo.grandQuota,
+                    silverQuota: combo.silverQuota,
+                    bronzeQuota: combo.bronzeQuota,
+                    consolationQuota: combo.consolationQuota,
+                    startDate: combo.startDate || '',
+                    endDate: combo.endDate || ''
+                });
             }
 
             if (winnersRes.ok && winnersData.success) {
@@ -89,6 +92,10 @@ export default function WinningCombination({ token }) {
         setSuccess('');
 
         try {
+            if (currentCombination?.status === 'active' && !isEditing) {
+                throw new Error('An active competition already exists. End it first before creating a new one.');
+            }
+
             const numbers = isEditing && currentCombination
                 ? currentCombination.numbers
                 : generateTicketNumbers();
@@ -138,6 +145,26 @@ export default function WinningCombination({ token }) {
         }
     };
 
+    const handleEndManually = async () => {
+        if (!window.confirm('End this competition manually?')) return;
+        setLoading(true);
+        try {
+            const res = await fetch(`${BASE_URL}/api/winning-combo/end`, {
+                method: 'PATCH',
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Failed to end competition');
+            setSuccess('Competition manually ended successfully!');
+            await fetchData();
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleEdit = () => {
         if (currentCombination) setIsEditing(true);
     };
@@ -149,7 +176,9 @@ export default function WinningCombination({ token }) {
                 grandQuota: currentCombination.grandQuota,
                 silverQuota: currentCombination.silverQuota,
                 bronzeQuota: currentCombination.bronzeQuota,
-                consolationQuota: currentCombination.consolationQuota
+                consolationQuota: currentCombination.consolationQuota,
+                startDate: currentCombination.startDate,
+                endDate: currentCombination.endDate
             });
         }
     };
@@ -223,22 +252,26 @@ export default function WinningCombination({ token }) {
                         <h3 className="text-lg font-semibold">Current Combination</h3>
                         {currentCombination && !isEditing && (
                             <div className="flex gap-2">
-                                <button onClick={handleEdit} className="text-blue-600 hover:text-blue-800 text-sm" disabled={loading}>Edit Quotas</button>
-                                <button onClick={handleDelete} className="text-red-600 hover:text-red-800 text-sm" disabled={loading}>Delete</button>
+                                <button onClick={handleEdit} className="text-blue-600 text-sm" disabled={loading}>Edit</button>
+                                <button onClick={handleEndManually} className="text-orange-600 text-sm" disabled={loading || currentCombination.status === 'ended'}>End</button>
+                                <button onClick={handleDelete} className="text-red-600 text-sm" disabled={loading}>Delete</button>
                             </div>
                         )}
                     </div>
                     {currentCombination ? (
                         <div>
                             <div className="flex flex-wrap gap-2 mb-4">{renderNumberBubbles()}</div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div><p className="text-sm text-gray-500">Grand Prize Quota</p><p className="font-bold">{currentCombination.grandQuota}</p></div>
-                                <div><p className="text-sm text-gray-500">Silver Prize Quota</p><p className="font-bold">{currentCombination.silverQuota}</p></div>
-                                <div><p className="text-sm text-gray-500">Bronze Prize Quota</p><p className="font-bold">{currentCombination.bronzeQuota}</p></div>
-                                <div><p className="text-sm text-gray-500">Consolation Quota</p><p className="font-bold">{currentCombination.consolationQuota}</p></div>
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div><p className="text-gray-500">Grand</p><p className="font-bold">{currentCombination.grandQuota}</p></div>
+                                <div><p className="text-gray-500">Silver</p><p className="font-bold">{currentCombination.silverQuota}</p></div>
+                                <div><p className="text-gray-500">Bronze</p><p className="font-bold">{currentCombination.bronzeQuota}</p></div>
+                                <div><p className="text-gray-500">Consolation</p><p className="font-bold">{currentCombination.consolationQuota}</p></div>
+                                <div><p className="text-gray-500">Start</p><p className="font-bold">{currentCombination.startDate}</p></div>
+                                <div><p className="text-gray-500">End</p><p className="font-bold">{currentCombination.endDate}</p></div>
+                                <div className="col-span-2"><p className="text-gray-500">Status</p><p className={`font-bold ${currentCombination.status === 'ended' ? 'text-red-600' : 'text-green-600'}`}>{currentCombination.status.toUpperCase()}</p></div>
                             </div>
                         </div>
-                    ) : <p className="text-gray-500">No winning combination set yet</p>}
+                    ) : <p className="text-gray-500">No combination set yet</p>}
                 </div>
 
                 <div className="bg-white rounded-lg shadow p-6">
@@ -248,20 +281,40 @@ export default function WinningCombination({ token }) {
                     <form onSubmit={handleSubmit}>
                         <p className="text-sm text-gray-700 mb-4">
                             {isEditing
-                                ? 'Edit the prize quotas below'
+                                ? 'Edit the prize quotas and duration'
                                 : currentCombination
                                     ? 'This will generate new numbers and replace the current combination'
-                                    : 'The winning numbers will be automatically generated'}
+                                    : 'Winning numbers will be generated randomly'}
                         </p>
-                        <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div className="grid grid-cols-2 gap-4 mb-4">
                             {renderQuotaField('Grand Prize Quota', 'grandQuota')}
                             {renderQuotaField('Silver Prize Quota', 'silverQuota')}
                             {renderQuotaField('Bronze Prize Quota', 'bronzeQuota')}
                             {renderQuotaField('Consolation Quota', 'consolationQuota')}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                <input
+                                    type="date"
+                                    value={formData.startDate}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
+                                    className="border rounded p-2 w-full"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                <input
+                                    type="date"
+                                    value={formData.endDate}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
+                                    className="border rounded p-2 w-full"
+                                    required
+                                />
+                            </div>
                         </div>
                         <div className="flex gap-2">
                             <button type="submit" disabled={loading} className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50">
-                                {loading ? (isEditing ? 'Updating...' : 'Processing...') : isEditing ? 'Update Quotas' : currentCombination ? 'Replace' : 'Create'}
+                                {loading ? (isEditing ? 'Updating...' : 'Processing...') : isEditing ? 'Update' : currentCombination ? 'Update' : 'Create'}
                             </button>
                             {isEditing && (
                                 <button type="button" onClick={handleCancelEdit} className="bg-gray-200 text-gray-800 py-2 px-4 rounded hover:bg-gray-300" disabled={loading}>Cancel</button>

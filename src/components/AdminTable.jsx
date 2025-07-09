@@ -16,9 +16,7 @@ export default function AdminTable({ token }) {
         const fetchTickets = async () => {
             try {
                 const res = await fetch(`${FILE_BASE_URL}/api/admin/tickets`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` }
                 });
                 const data = await res.json();
                 if (!data.success) throw new Error(data.message || 'Unauthorized');
@@ -28,7 +26,6 @@ export default function AdminTable({ token }) {
                 alert('Failed to load tickets: ' + error.message);
             }
         };
-
         if (token) fetchTickets();
     }, [token]);
 
@@ -54,7 +51,7 @@ export default function AdminTable({ token }) {
             year: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
-            second: '2-digit',
+            second: '2-digit'
         });
     };
 
@@ -95,30 +92,31 @@ export default function AdminTable({ token }) {
     }, [searchTerm, fromDate, toDate]);
 
     const downloadExcel = () => {
-        const formattedTickets = filteredTickets.map((ticket, i) => ({
+        const formatted = filteredTickets.map((t, i) => ({
             "S. No": i + 1,
-            Name: ticket.name,
-            Email: ticket.email,
-            Phone: ticket.phone,
-            TicketID: ticket.ticketID,
-            Numbers: parseNumbers(ticket.numbers).join(' '),
-            SuperTicket: ticket.isSuperTicket ? 'Yes' : 'No',
-            Prize: ticket.prizeType || '-',
-            Issued: ticket.issueDate,
-            Expiry: ticket.expiryDate,
-            CreatedAt: formatDateTime(ticket.createdAt),
-            ProofImageURL: ticket.proofImage ? FILE_BASE_URL + ticket.proofImage : '',
-            PurchaseProofURL: ticket.purchaseProof ? FILE_BASE_URL + ticket.purchaseProof : ''
+            Name: t.name,
+            Email: t.email,
+            Phone: t.phone,
+            TicketID: t.ticketID,
+            Numbers: parseNumbers(t.numbers).join(' '),
+            SuperTicket: t.isSuperTicket ? 'Yes' : 'No',
+            Prize: t.prizeType || '-',
+            Issued: t.issueDate || '-',
+            Expiry: t.expiryDate || '-',
+            CreatedAt: formatDateTime(t.createdAt),
+            ProofImageURL: t.proofImage ? FILE_BASE_URL + t.proofImage : '',
+            PurchaseProofURL: t.purchaseProof ? FILE_BASE_URL + t.purchaseProof : ''
         }));
 
-        const worksheet = XLSX.utils.json_to_sheet(formattedTickets);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Tickets');
-        XLSX.writeFile(workbook, 'tickets.xlsx');
+        const ws = XLSX.utils.json_to_sheet(formatted);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Tickets');
+        XLSX.writeFile(wb, 'tickets.xlsx');
     };
 
     return (
         <div className="p-6">
+            {/* File Preview Modal */}
             {previewUrl && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg w-full max-w-2xl p-4 shadow-lg relative">
@@ -136,7 +134,7 @@ export default function AdminTable({ token }) {
                                 } else if (type === 'video') {
                                     return (
                                         <video controls className="max-h-full max-w-full rounded shadow">
-                                            <source src={previewUrl} type="video/mp4" />
+                                            <source src={previewUrl} />
                                             Your browser does not support the video tag.
                                         </video>
                                     );
@@ -162,7 +160,7 @@ export default function AdminTable({ token }) {
                 </div>
             )}
 
-            {/* Filters and Download */}
+            {/* Filters */}
             <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4 mb-6">
                 <div className="flex flex-wrap gap-4 items-end">
                     <div>
@@ -208,20 +206,13 @@ export default function AdminTable({ token }) {
                 <table className="min-w-full border text-sm">
                     <thead className="bg-gray-100 text-left">
                         <tr>
-                            <th className="p-2 border">S. No</th>
-                            <th className="p-2 border">Name</th>
-                            <th className="p-2 border">Email</th>
-                            <th className="p-2 border">Phone</th>
-                            <th className="p-2 border">Ticket ID</th>
-                            <th className="p-2 border">Numbers</th>
-                            <th className="p-2 border">Super</th>
-                            <th className="p-2 border">Prize</th>
-                            <th className="p-2 border">Issued</th>
-                            <th className="p-2 border">Expiry</th>
-                            <th className="p-2 border">Proof</th>
-                            <th className="p-2 border">Follow Proof</th>
-                            <th className="p-2 border">Purchase Proof</th>
-                            <th className="p-2 border">Created At</th>
+                            {[
+                                "S. No", "Name", "Email", "Phone", "Ticket ID", "Numbers",
+                                "Super", "Prize", "Issued", "Expiry", "Proof", "Follow Proof",
+                                "Purchase Proof", "Created At"
+                            ].map((header, idx) => (
+                                <th key={idx} className="p-2 border">{header}</th>
+                            ))}
                         </tr>
                     </thead>
                     <tbody>
@@ -237,21 +228,20 @@ export default function AdminTable({ token }) {
                                 <td className="p-2 border">{t.prizeType || '-'}</td>
                                 <td className="p-2 border">{t.issueDate}</td>
                                 <td className="p-2 border">{t.expiryDate}</td>
-                                <td className="p-2 border">
-                                    {t.proofImage ? (
-                                        <button onClick={() => setPreviewUrl(FILE_BASE_URL + t.proofImage)} className="text-blue-600 underline hover:text-blue-800">View</button>
-                                    ) : <span className="text-gray-400 italic">No file</span>}
-                                </td>
-                                <td className="p-2 border">
-                                    {t.followProof ? (
-                                        <button onClick={() => setPreviewUrl(FILE_BASE_URL + t.followProof)} className="text-blue-600 underline hover:text-blue-800">View</button>
-                                    ) : <span className="text-gray-400 italic">No file</span>}
-                                </td>
-                                <td className="p-2 border">
-                                    {t.purchaseProof ? (
-                                        <button onClick={() => setPreviewUrl(FILE_BASE_URL + t.purchaseProof)} className="text-blue-600 underline hover:text-blue-800">View</button>
-                                    ) : <span className="text-gray-400 italic">No file</span>}
-                                </td>
+                                {['proofImage', 'followProof', 'purchaseProof'].map((key, j) => (
+                                    <td key={j} className="p-2 border">
+                                        {t[key] ? (
+                                            <button
+                                                onClick={() => setPreviewUrl(FILE_BASE_URL + t[key])}
+                                                className="text-blue-600 underline hover:text-blue-800"
+                                            >
+                                                View
+                                            </button>
+                                        ) : (
+                                            <span className="text-gray-400 italic">No file</span>
+                                        )}
+                                    </td>
+                                ))}
                                 <td className="p-2 border">{formatDateTime(t.createdAt)}</td>
                             </tr>
                         ))}

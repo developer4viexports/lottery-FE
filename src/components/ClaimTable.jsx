@@ -15,9 +15,7 @@ export default function ClaimAdminTable({ token }) {
         const fetchClaims = async () => {
             try {
                 const res = await fetch(`${FILE_BASE_URL}/api/admin/claims`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 });
                 const data = await res.json();
                 if (!res.ok || !data.success) throw new Error(data.message || 'Unauthorized');
@@ -27,7 +25,6 @@ export default function ClaimAdminTable({ token }) {
                 alert('Failed to load claims: ' + error.message);
             }
         };
-
         if (token) fetchClaims();
     }, [token]);
 
@@ -82,55 +79,61 @@ export default function ClaimAdminTable({ token }) {
     }, [fromDate, toDate, searchTerm]);
 
     const downloadExcel = () => {
-        const formattedClaims = filteredClaims.map((claim, i) => ({
+        const formatted = filteredClaims.map((c, i) => ({
             'S. No': i + 1,
-            TicketID: claim.ticketID,
-            Name: claim.name,
-            Email: claim.email,
-            Phone: claim.phone,
-            CountryCode: claim.countryCode,
-            Instagram: claim.instagram,
-            TicketImageURL: claim.ticketImage ? FILE_BASE_URL + claim.ticketImage : '',
-            ProofImageURL: claim.proofImage ? FILE_BASE_URL + claim.proofImage : '',
-            SubmittedAt: formatDateTime(claim.createdAt),
+            TicketID: c.ticketID,
+            Name: c.name,
+            Email: c.email,
+            Phone: c.phone,
+            CountryCode: c.countryCode,
+            Instagram: c.instagram,
+            TicketImageURL: c.ticketImage ? FILE_BASE_URL + c.ticketImage : '',
+            ProofImageURL: c.proofImage ? FILE_BASE_URL + c.proofImage : '',
+            SubmittedAt: formatDateTime(c.createdAt),
         }));
 
-        const worksheet = XLSX.utils.json_to_sheet(formattedClaims);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Claims');
-        XLSX.writeFile(workbook, 'claims.xlsx');
+        const ws = XLSX.utils.json_to_sheet(formatted);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Claims');
+        XLSX.writeFile(wb, 'claims.xlsx');
+    };
+
+    const getPreviewContent = (url) => {
+        const type = getFileType(url);
+        if (type === 'image') {
+            return <img src={url} alt="Preview" className="max-h-full max-w-full rounded shadow" />;
+        } else if (type === 'video') {
+            return (
+                <video controls className="max-h-full max-w-full rounded shadow">
+                    <source src={url} type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video>
+            );
+        } else if (type === 'pdf') {
+            return <iframe src={url} className="w-full h-full rounded" />;
+        } else {
+            return <p className="text-gray-600">Preview not supported for this file type.</p>;
+        }
     };
 
     return (
         <div className="p-6">
+            {/* File Preview Modal */}
             {previewUrl && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div
+                    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+                    role="dialog"
+                    aria-modal="true"
+                >
                     <div className="bg-white rounded-lg w-full max-w-2xl p-4 shadow-lg relative">
                         <button
                             onClick={() => setPreviewUrl(null)}
                             className="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-xl"
+                            aria-label="Close preview"
                         >
                             ×
                         </button>
-                        <div className="h-96 flex justify-center items-center">
-                            {(() => {
-                                const type = getFileType(previewUrl);
-                                if (type === 'image') {
-                                    return <img src={previewUrl} alt="Preview" className="max-h-full max-w-full rounded shadow" />;
-                                } else if (type === 'video') {
-                                    return (
-                                        <video controls className="max-h-full max-w-full rounded shadow">
-                                            <source src={previewUrl} type="video/mp4" />
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    );
-                                } else if (type === 'pdf') {
-                                    return <iframe src={previewUrl} className="w-full h-full rounded" />;
-                                } else {
-                                    return <p className="text-gray-600">Preview not supported for this file type.</p>;
-                                }
-                            })()}
-                        </div>
+                        <div className="h-96 flex justify-center items-center">{getPreviewContent(previewUrl)}</div>
                         <div className="mt-4 text-right">
                             <a
                                 href={previewUrl}
@@ -146,6 +149,7 @@ export default function ClaimAdminTable({ token }) {
                 </div>
             )}
 
+            {/* Filters + Download */}
             <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4 mb-6">
                 <div>
                     <h2 className="text-xl font-bold mb-2">All Claim Submissions</h2>
@@ -189,20 +193,17 @@ export default function ClaimAdminTable({ token }) {
                 </button>
             </div>
 
+            {/* Table */}
             <div className="overflow-x-auto">
                 <table className="min-w-full border text-sm">
                     <thead className="bg-gray-100 text-left">
                         <tr>
-                            <th className="p-2 border">S. No</th>
-                            <th className="p-2 border">Ticket ID</th>
-                            <th className="p-2 border">Name</th>
-                            <th className="p-2 border">Email</th>
-                            <th className="p-2 border">Phone</th>
-                            <th className="p-2 border">Country</th>
-                            <th className="p-2 border">Instagram</th>
-                            <th className="p-2 border">Ticket File</th>
-                            <th className="p-2 border">Proof File</th>
-                            <th className="p-2 border">Submitted At</th>
+                            {[
+                                'S. No', 'Ticket ID', 'Name', 'Email', 'Phone', 'Country',
+                                'Instagram', 'Ticket File', 'Proof File', 'Submitted At'
+                            ].map((h, i) => (
+                                <th key={i} className="p-2 border">{h}</th>
+                            ))}
                         </tr>
                     </thead>
                     <tbody>
