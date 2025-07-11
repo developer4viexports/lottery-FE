@@ -9,17 +9,19 @@ function generateTicketNumbers() {
     return [...nums];
 }
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.lottery.tenderbaba.com';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export default function WinningCombination({ token }) {
     const [formData, setFormData] = useState({
-        grandQuota: 1,
-        silverQuota: 3,
-        bronzeQuota: 5,
-        consolationQuota: 10,
+        grandQuota: '',
+        silverQuota: '',
+        bronzeQuota: '',
+        consolationQuota: '',
+        totalParticipants: '',
         startDate: '',
         endDate: ''
     });
+
     const [currentCombination, setCurrentCombination] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -44,11 +46,7 @@ export default function WinningCombination({ token }) {
                     headers: { Authorization: `Bearer ${token}` }
                 })
             ]);
-
-            const [comboData, winnersData] = await Promise.all([
-                comboRes.json(),
-                winnersRes.json()
-            ]);
+            const [comboData, winnersData] = await Promise.all([comboRes.json(), winnersRes.json()]);
 
             if (comboRes.ok && comboData.success) {
                 const combo = comboData.data;
@@ -58,6 +56,7 @@ export default function WinningCombination({ token }) {
                     silverQuota: combo.silverQuota,
                     bronzeQuota: combo.bronzeQuota,
                     consolationQuota: combo.consolationQuota,
+                    totalParticipants: combo.totalParticipants,
                     startDate: combo.startDate || '',
                     endDate: combo.endDate || ''
                 });
@@ -73,15 +72,15 @@ export default function WinningCombination({ token }) {
         }
     };
 
-    useEffect(() => {
-        fetchData();
-    }, []);
+    useEffect(() => { fetchData(); }, []);
 
     const handleQuotaChange = (field, value) => {
-        const numValue = parseInt(value);
+        if (currentCombination && currentCombination.status === 'active') {
+            return; // Prevent editing quotas if the competition is active
+        }
         setFormData(prev => ({
             ...prev,
-            [field]: isNaN(numValue) ? 0 : Math.max(0, numValue)
+            [field]: value === '' ? '' : Math.max(0, parseInt(value) || 0)
         }));
     };
 
@@ -92,8 +91,12 @@ export default function WinningCombination({ token }) {
         setSuccess('');
 
         try {
+            if (!formData.totalParticipants || parseInt(formData.totalParticipants) <= 0) {
+                throw new Error('Total Participants must be a positive number.');
+            }
+
             if (currentCombination?.status === 'active' && !isEditing) {
-                throw new Error('An active competition already exists. End it first before creating a new one.');
+                throw new Error('An active competition already exists. End it before creating a new one.');
             }
 
             const numbers = isEditing && currentCombination
@@ -110,7 +113,7 @@ export default function WinningCombination({ token }) {
             });
 
             const data = await res.json();
-            if (!res.ok) throw new Error(data.message || 'Operation failed');
+            if (!res.ok) throw new Error(data.message || 'Failed to process');
 
             setSuccess(`Winning combination ${isEditing ? 'updated' : 'created'} successfully!`);
             setIsEditing(false);
@@ -123,19 +126,16 @@ export default function WinningCombination({ token }) {
     };
 
     const handleDelete = async () => {
-        if (!window.confirm('Are you sure you want to delete the current winning combination?')) return;
-
+        if (!window.confirm('Delete the current winning combination?')) return;
         setLoading(true);
         try {
             const res = await fetch(`${BASE_URL}/api/winning-combo`, {
                 method: 'DELETE',
                 headers: { Authorization: `Bearer ${token}` }
             });
-
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || 'Deletion failed');
-
-            setSuccess('Winning combination deleted successfully!');
+            setSuccess('Winning combination deleted.');
             setCurrentCombination(null);
             await fetchData();
         } catch (err) {
@@ -153,10 +153,9 @@ export default function WinningCombination({ token }) {
                 method: 'PATCH',
                 headers: { Authorization: `Bearer ${token}` }
             });
-
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || 'Failed to end competition');
-            setSuccess('Competition manually ended successfully!');
+            setSuccess('Competition ended manually.');
             await fetchData();
         } catch (err) {
             setError(err.message);
@@ -177,17 +176,19 @@ export default function WinningCombination({ token }) {
                 silverQuota: currentCombination.silverQuota,
                 bronzeQuota: currentCombination.bronzeQuota,
                 consolationQuota: currentCombination.consolationQuota,
+                totalParticipants: currentCombination.totalParticipants,
                 startDate: currentCombination.startDate,
                 endDate: currentCombination.endDate
             });
         }
     };
 
-    const renderNumberBubbles = () => currentCombination?.numbers.map((num, i) => (
-        <span key={i} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-lg font-bold">
-            {num}
-        </span>
-    ));
+    const renderNumberBubbles = () =>
+        currentCombination?.numbers.map((num, i) => (
+            <span key={i} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-lg font-bold">
+                {num}
+            </span>
+        ));
 
     const renderQuotaField = (label, field) => (
         <div>
@@ -199,15 +200,14 @@ export default function WinningCombination({ token }) {
                 onChange={(e) => handleQuotaChange(field, e.target.value)}
                 className="border rounded p-2 w-full"
                 required
+                disabled={currentCombination?.status === 'active'}
             />
         </div>
     );
 
     const renderWinnersTable = (prizeType, winnersList) => (
         <div key={prizeType} className="mb-6">
-            <h4 className="font-medium text-lg mb-2">
-                {prizeType} Prize Winners ({winnersList.length})
-            </h4>
+            <h4 className="font-medium text-lg mb-2">{prizeType} Prize Winners ({winnersList.length})</h4>
             {winnersList.length > 0 ? (
                 <div className="overflow-x-auto">
                     <table className="min-w-full border">
@@ -221,21 +221,19 @@ export default function WinningCombination({ token }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {winnersList.map((winner, i) => (
+                            {winnersList.map((w, i) => (
                                 <tr key={i} className="hover:bg-gray-50">
-                                    <td className="p-2 border">{winner.ticketID}</td>
-                                    <td className="p-2 border">{winner.name}</td>
-                                    <td className="p-2 border">{winner.email}</td>
-                                    <td className="p-2 border">{winner.phone}</td>
-                                    <td className="p-2 border">{winner.numbers.join(' ')}</td>
+                                    <td className="p-2 border">{w.ticketID}</td>
+                                    <td className="p-2 border">{w.name}</td>
+                                    <td className="p-2 border">{w.email}</td>
+                                    <td className="p-2 border">{w.phone}</td>
+                                    <td className="p-2 border">{w.numbers?.join(' ')}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
-            ) : (
-                <p className="text-gray-500">No {prizeType.toLowerCase()} prize winners yet</p>
-            )}
+            ) : <p className="text-gray-500">No {prizeType.toLowerCase()} winners yet.</p>}
         </div>
     );
 
@@ -243,93 +241,70 @@ export default function WinningCombination({ token }) {
         <div className="p-6 max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold mb-6">🎯 Manage Winning Combination</h2>
 
-            {error && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">{error}</div>}
-            {success && <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">{success}</div>}
+            {error && <div className="bg-red-100 text-red-700 p-4 mb-4">{error}</div>}
+            {success && <div className="bg-green-100 text-green-700 p-4 mb-4">{success}</div>}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white rounded-lg shadow p-6">
-                    <div className="flex justify-between items-center mb-4">
+                <div className="bg-white shadow rounded p-6">
+                    <div className="flex justify-between mb-4">
                         <h3 className="text-lg font-semibold">Current Combination</h3>
                         {currentCombination && !isEditing && (
-                            <div className="flex gap-2">
-                                <button onClick={handleEdit} className="text-blue-600 text-sm" disabled={loading}>Edit</button>
-                                <button onClick={handleEndManually} className="text-orange-600 text-sm" disabled={loading || currentCombination.status === 'ended'}>End</button>
-                                <button onClick={handleDelete} className="text-red-600 text-sm" disabled={loading}>Delete</button>
+                            <div className="flex gap-2 text-sm">
+                                <button onClick={handleEdit} className="text-blue-600">Edit</button>
+                                <button onClick={handleEndManually} className="text-orange-600">End</button>
+                                <button onClick={handleDelete} className="text-red-600">Delete</button>
                             </div>
                         )}
                     </div>
                     {currentCombination ? (
-                        <div>
+                        <>
                             <div className="flex flex-wrap gap-2 mb-4">{renderNumberBubbles()}</div>
                             <div className="grid grid-cols-2 gap-4 text-sm">
-                                <div><p className="text-gray-500">Grand</p><p className="font-bold">{currentCombination.grandQuota}</p></div>
-                                <div><p className="text-gray-500">Silver</p><p className="font-bold">{currentCombination.silverQuota}</p></div>
-                                <div><p className="text-gray-500">Bronze</p><p className="font-bold">{currentCombination.bronzeQuota}</p></div>
-                                <div><p className="text-gray-500">Consolation</p><p className="font-bold">{currentCombination.consolationQuota}</p></div>
-                                <div><p className="text-gray-500">Start</p><p className="font-bold">{currentCombination.startDate}</p></div>
-                                <div><p className="text-gray-500">End</p><p className="font-bold">{currentCombination.endDate}</p></div>
-                                <div className="col-span-2"><p className="text-gray-500">Status</p><p className={`font-bold ${currentCombination.status === 'ended' ? 'text-red-600' : 'text-green-600'}`}>{currentCombination.status.toUpperCase()}</p></div>
+                                <div><p>Grand</p><p className="font-bold">{currentCombination.grandQuota}</p></div>
+                                <div><p>Silver</p><p className="font-bold">{currentCombination.silverQuota}</p></div>
+                                <div><p>Bronze</p><p className="font-bold">{currentCombination.bronzeQuota}</p></div>
+                                <div><p>Consolation</p><p className="font-bold">{currentCombination.consolationQuota}</p></div>
+                                <div><p>Total Participants</p><p className="font-bold">{currentCombination.totalParticipants}</p></div>
+                                <div><p>Start</p><p className="font-bold">{currentCombination.startDate}</p></div>
+                                <div><p>End</p><p className="font-bold">{currentCombination.endDate}</p></div>
+                                <div className="col-span-2"><p>Status</p><p className={`font-bold ${currentCombination.status === 'ended' ? 'text-red-600' : 'text-green-600'}`}>{currentCombination.status}</p></div>
                             </div>
-                        </div>
-                    ) : <p className="text-gray-500">No combination set yet</p>}
+                        </>
+                    ) : <p>No combination set</p>}
                 </div>
 
-                <div className="bg-white rounded-lg shadow p-6">
-                    <h3 className="text-lg font-semibold mb-4">
-                        {isEditing ? 'Edit Quotas' : currentCombination ? 'Replace Combination' : 'Create New Combination'}
-                    </h3>
+                <div className="bg-white shadow rounded p-6">
+                    <h3 className="text-lg font-semibold mb-4">{isEditing ? 'Edit Combination' : currentCombination ? 'Replace Combination' : 'Create New Combination'}</h3>
                     <form onSubmit={handleSubmit}>
-                        <p className="text-sm text-gray-700 mb-4">
-                            {isEditing
-                                ? 'Edit the prize quotas and duration'
-                                : currentCombination
-                                    ? 'This will generate new numbers and replace the current combination'
-                                    : 'Winning numbers will be generated randomly'}
-                        </p>
                         <div className="grid grid-cols-2 gap-4 mb-4">
-                            {renderQuotaField('Grand Prize Quota', 'grandQuota')}
-                            {renderQuotaField('Silver Prize Quota', 'silverQuota')}
-                            {renderQuotaField('Bronze Prize Quota', 'bronzeQuota')}
+                            {renderQuotaField('Grand Quota', 'grandQuota')}
+                            {renderQuotaField('Silver Quota', 'silverQuota')}
+                            {renderQuotaField('Bronze Quota', 'bronzeQuota')}
                             {renderQuotaField('Consolation Quota', 'consolationQuota')}
+                            {renderQuotaField('Total Participants', 'totalParticipants')}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                                <input
-                                    type="date"
-                                    value={formData.startDate}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
-                                    className="border rounded p-2 w-full"
-                                    required
-                                />
+                                <label className="block text-sm mb-1">Start Date</label>
+                                <input type="date" value={formData.startDate} onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))} required className="border p-2 w-full" />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-                                <input
-                                    type="date"
-                                    value={formData.endDate}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
-                                    className="border rounded p-2 w-full"
-                                    required
-                                />
+                                <label className="block text-sm mb-1">End Date</label>
+                                <input type="date" value={formData.endDate} onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))} required className="border p-2 w-full" />
                             </div>
                         </div>
                         <div className="flex gap-2">
-                            <button type="submit" disabled={loading} className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50">
-                                {loading ? (isEditing ? 'Updating...' : 'Processing...') : isEditing ? 'Update' : currentCombination ? 'Update' : 'Create'}
-                            </button>
+                            <button type="submit" disabled={loading} className="bg-blue-600 text-white px-4 py-2 rounded">{loading ? 'Processing...' : isEditing ? 'Update' : 'Create'}</button>
                             {isEditing && (
-                                <button type="button" onClick={handleCancelEdit} className="bg-gray-200 text-gray-800 py-2 px-4 rounded hover:bg-gray-300" disabled={loading}>Cancel</button>
+                                <button type="button" onClick={handleCancelEdit} className="bg-gray-200 px-4 py-2 rounded">Cancel</button>
                             )}
                         </div>
                     </form>
                 </div>
             </div>
 
-            <div className="mt-8 bg-white rounded-lg shadow p-6">
+            <div className="mt-8 bg-white shadow rounded p-6">
                 <h3 className="text-lg font-semibold mb-4">Current Winners</h3>
-                {Object.entries(winners).map(([prizeType, winnersList]) => renderWinnersTable(prizeType, winnersList))}
-                {Object.values(winners).flat().length === 0 && (
-                    <p className="text-gray-500 mt-2">No winners yet.</p>
-                )}
+                {Object.entries(winners).map(([type, list]) => renderWinnersTable(type, list))}
+                {Object.values(winners).flat().length === 0 && <p className="text-gray-500">No winners yet.</p>}
             </div>
         </div>
     );

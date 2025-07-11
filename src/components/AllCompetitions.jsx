@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import the useNavigate hook
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.lottery.tenderbaba.com';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export default function AllCompetitions({ token }) {
     const [competitions, setCompetitions] = useState([]);
@@ -9,6 +10,7 @@ export default function AllCompetitions({ token }) {
     const [selectedCompetition, setSelectedCompetition] = useState(null);
     const [tickets, setTickets] = useState([]);
     const [claims, setClaims] = useState([]);
+    const navigate = useNavigate(); // Initialize useNavigate
 
     const fetchCompetitions = async () => {
         setLoading(true);
@@ -27,6 +29,7 @@ export default function AllCompetitions({ token }) {
     };
 
     const fetchDetails = async (id) => {
+        // This will be removed because we are now using navigation
         try {
             const res = await fetch(`${BASE_URL}/api/winning-combo/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -40,6 +43,10 @@ export default function AllCompetitions({ token }) {
         } catch (err) {
             alert(err.message);
         }
+    };
+
+    const handleViewCompetition = (id) => {
+        navigate(`/competition/${id}`); // Navigate to the competition details page
     };
 
     useEffect(() => {
@@ -87,7 +94,7 @@ export default function AllCompetitions({ token }) {
                                     <td className="p-2 border">{comp.consolationQuota}</td>
                                     <td className="p-2 border">
                                         <button
-                                            onClick={() => fetchDetails(comp.id)}
+                                            onClick={() => handleViewCompetition(comp.id)} // Handle the view button click
                                             className="text-blue-600 hover:underline text-sm"
                                         >
                                             View
@@ -97,100 +104,6 @@ export default function AllCompetitions({ token }) {
                             ))}
                         </tbody>
                     </table>
-                </div>
-            )}
-
-            {selectedCompetition && (
-                <div className="bg-white shadow-md p-6 rounded-md border">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <h4 className="text-xl font-bold mb-2">
-                                📄 Competition #{selectedCompetition.id} Details
-                            </h4>
-                            <p><strong>Status:</strong> {selectedCompetition.status}</p>
-                            <p><strong>Start Date:</strong> {selectedCompetition.startDate}</p>
-                            <p><strong>End Date:</strong> {selectedCompetition.endDate}</p>
-                            <p><strong>Numbers:</strong> {selectedCompetition.numbers.join(', ')}</p>
-                            <p><strong>Grand Quota:</strong> {selectedCompetition.grandQuota}</p>
-                            <p><strong>Silver Quota:</strong> {selectedCompetition.silverQuota}</p>
-                            <p><strong>Bronze Quota:</strong> {selectedCompetition.bronzeQuota}</p>
-                            <p><strong>Consolation Quota:</strong> {selectedCompetition.consolationQuota}</p>
-                        </div>
-                        <button
-                            onClick={() => {
-                                setSelectedCompetition(null);
-                                setTickets([]);
-                                setClaims([]);
-                            }}
-                            className="text-sm text-gray-500 hover:text-gray-700"
-                        >
-                            Close ✖️
-                        </button>
-                    </div>
-
-                    <div className="mt-6">
-                        <h4 className="text-lg font-semibold mb-2">🎫 Tickets</h4>
-                        {tickets.length === 0 ? (
-                            <p className="text-gray-500">No tickets found.</p>
-                        ) : (
-                            <div className="overflow-x-auto mb-4">
-                                <table className="min-w-full border">
-                                    <thead className="bg-gray-100">
-                                        <tr>
-                                            <th className="p-2 border">Ticket ID</th>
-                                            <th className="p-2 border">Email</th>
-                                            <th className="p-2 border">Phone</th>
-                                            <th className="p-2 border">Numbers</th>
-                                            <th className="p-2 border">Prize</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {tickets.map((t) => (
-                                            <tr key={t.id}>
-                                                <td className="p-2 border">{t.ticketID}</td>
-                                                <td className="p-2 border">{t.email}</td>
-                                                <td className="p-2 border">{t.phone}</td>
-                                                <td className="p-2 border">{t.numbers?.join(', ')}</td>
-                                                <td className="p-2 border">{t.prizeType || '-'}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
-
-                        <h4 className="text-lg font-semibold mb-2">📩 Claims</h4>
-                        {claims.length === 0 ? (
-                            <p className="text-gray-500">No claims found.</p>
-                        ) : (
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full border">
-                                    <thead className="bg-gray-100">
-                                        <tr>
-                                            <th className="p-2 border">Claim ID</th>
-                                            <th className="p-2 border">Ticket ID</th>
-                                            <th className="p-2 border">Name</th>
-                                            <th className="p-2 border">Email</th>
-                                            <th className="p-2 border">Phone</th>
-                                            <th className="p-2 border">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {claims.map((c) => (
-                                            <tr key={c.id}>
-                                                <td className="p-2 border">{c.id}</td>
-                                                <td className="p-2 border">{c.ticketID}</td>
-                                                <td className="p-2 border">{c.name}</td>
-                                                <td className="p-2 border">{c.email}</td>
-                                                <td className="p-2 border">{c.phone}</td>
-                                                <td className="p-2 border capitalize">{c.status}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
-                    </div>
                 </div>
             )}
         </div>

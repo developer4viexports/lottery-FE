@@ -7,6 +7,9 @@ import Footer from './components/Footer';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import AdminDashboard from './pages/AdminDashboard';
+import CompetitionDetails from './components/CompetitionDetails';
+import CompetitionAllDetails from './components/CompetitionAllDetails';
+import NotFound from './components/NotFound'; // Assuming you have a NotFound component
 
 function App() {
   return (
@@ -22,6 +25,9 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/competition/:id" element={<CompetitionDetails />} />
+            <Route path="/competition/:id/all-tickets" element={<CompetitionAllDetails />} />
+            <Route path="*" element={<NotFound />} /> {/* Catch-all route for 404 */}
           </Routes>
         </main>
 
