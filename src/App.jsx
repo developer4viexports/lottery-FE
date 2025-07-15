@@ -14,10 +14,10 @@ import NotFound from './components/NotFound'; // Assuming you have a NotFound co
 function App() {
   return (
     <Router>
-      <div className="min-h-screen flex flex-col">
-        <Header />
+      {/* <div className="min-h-screen flex flex-col">
+        <Header /> */}
 
-        <main className="flex-grow">
+        {/* <main className="flex-grow"> */}
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
@@ -29,10 +29,10 @@ function App() {
             <Route path="/competition/:id/all-tickets" element={<CompetitionAllDetails />} />
             <Route path="*" element={<NotFound />} /> {/* Catch-all route for 404 */}
           </Routes>
-        </main>
+        {/* </main> */}
 
-        <Footer />
-      </div>
+        {/* <Footer />
+      </div> */}
     </Router>
   );
 }
