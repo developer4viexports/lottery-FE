@@ -273,7 +273,7 @@ export default function CompetitionAllDetails() {
                                     <th className="p-2 border">Name</th>
                                     <th className="p-2 border">Email</th>
                                     <th className="p-2 border">Phone</th>
-                                    <th className="p-2 border">Country</th>
+                                    {/* <th className="p-2 border">Country</th> */}
                                     <th className="p-2 border">Instagram</th>
                                     <th className="p-2 border">Ticket File</th>
                                     <th className="p-2 border">Proof File</th>
@@ -288,7 +288,7 @@ export default function CompetitionAllDetails() {
                                         <td className="p-2 border">{claim.name}</td>
                                         <td className="p-2 border">{claim.email}</td>
                                         <td className="p-2 border">{claim.phone}</td>
-                                        <td className="p-2 border">{claim.countryCode || '-'}</td>
+                                        {/* <td className="p-2 border">{claim.countryCode || '-'}</td> */}
                                         <td className="p-2 border">{claim.instagram}</td>
                                         <td className="p-2 border">
                                             {claim.ticketImage ? (

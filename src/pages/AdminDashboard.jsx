@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AdminTable from '../components/AdminTable';
 import ClaimTable from '../components/ClaimTable';
-import WinningTable from '../components/WinningTable';
+import DeclareTable from '../components/DeclareTable';
 import WinningCombination from '../components/WinningCombination';
 import AllCompetitions from '../components/AllCompetitions';
 import { loginAdmin } from '../api/api'; // 🔐 API call for login
@@ -103,7 +103,7 @@ export default function AdminDashboard() {
                         onClick={() => setTab('winning')}
                         className={`px-4 py-2 rounded font-medium ${tab === 'winning' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
                     >
-                        🏆 Winning Tickets
+                        🏆 Declare
                     </button>
                     <button
                         onClick={() => setTab('combination')}
@@ -130,7 +130,7 @@ export default function AdminDashboard() {
             <div className="bg-white shadow rounded p-4">
                 {tab === 'tickets' && <AdminTable token={token} />}
                 {tab === 'claims' && <ClaimTable token={token} />}
-                {tab === 'winning' && <WinningTable token={token} />}
+                {tab === 'winning' && <DeclareTable token={token} />}
                 {tab === 'combination' && <WinningCombination token={token} />}
                 {tab === 'all' && <AllCompetitions token={token} />}
 

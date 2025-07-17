@@ -199,7 +199,7 @@ export default function ClaimAdminTable({ token }) {
                     <thead className="bg-gray-100 text-left">
                         <tr>
                             {[
-                                'S. No', 'Ticket ID', 'Name', 'Email', 'Phone', 'Country',
+                                'S. No', 'Ticket ID', 'Name', 'Email', 'Phone', 
                                 'Instagram', 'Ticket File', 'Proof File', 'Submitted At'
                             ].map((h, i) => (
                                 <th key={i} className="p-2 border">{h}</th>
@@ -214,7 +214,7 @@ export default function ClaimAdminTable({ token }) {
                                 <td className="p-2 border">{c.name}</td>
                                 <td className="p-2 border">{c.email}</td>
                                 <td className="p-2 border">{c.phone}</td>
-                                <td className="p-2 border">{c.countryCode || '-'}</td>
+                                {/* <td className="p-2 border">{c.countryCode || '-'}</td> */}
                                 <td className="p-2 border">{c.instagram}</td>
                                 <td className="p-2 border">
                                     {c.ticketImage ? (

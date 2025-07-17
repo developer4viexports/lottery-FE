@@ -3,7 +3,7 @@ import React from 'react';
 export default function TicketDisplay({ winners }) {
     return (
         <section className="bg-[#1a0b0c] py-14 px-4 sm:px-6">
-            <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-10 items-center justify-center">
+            <div className="max-w-3xl mx-auto flex flex-col items-center gap-10">
                 {winners.map((ticket, idx) => (
                     <div
                         key={ticket._id || idx}
@@ -19,7 +19,7 @@ export default function TicketDisplay({ winners }) {
                         {/* Ticket content */}
                         <div className="relative z-10 px-8 py-6">
                             <p className="text-xl font-bold tracking-wide text-[#2b2b2b]">{ticket.ticketID}</p>
-                            <p className="text-sm text-gray-600 mt-1 capitalize">{ticket.name || 'Anonymous'}</p>
+                            {/* <p className="text-sm text-gray-600 mt-1 capitalize">{ticket.name || 'Anonymous'}</p> */}
                         </div>
                     </div>
                 ))}

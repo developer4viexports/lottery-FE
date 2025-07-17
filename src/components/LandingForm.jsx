@@ -3,7 +3,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import TicketPreview from './TicketPreview';
 import { submitTicket } from '../api/api';
-import { FaUser, FaPhone, FaEnvelope, FaInstagram, FaUpload } from 'react-icons/fa';
+import { FaUser, FaPhone, FaEnvelope, FaInstagram, FaUpload, FaCheckCircle, FaTimes } from 'react-icons/fa';
 
 export default function LandingForm() {
     const [form, setForm] = useState({
@@ -19,6 +19,7 @@ export default function LandingForm() {
 
     const [errors, setErrors] = useState({});
     const [ticket, setTicket] = useState(null);
+    const [showModal, setShowModal] = useState(false); // for popup
 
     const validate = () => {
         const errs = {};
@@ -52,7 +53,7 @@ export default function LandingForm() {
         if (!validate()) return;
 
         const issueDate = new Date().toLocaleDateString('en-GB');
-        const expiryDate = '30-06-2025';
+        const expiryDate = '30-06-2026';
 
         const formData = new FormData();
         formData.append('name', form.name);
@@ -70,7 +71,10 @@ export default function LandingForm() {
 
         try {
             const response = await submitTicket(formData);
-            if (response?.data) setTicket(response.data);
+            if (response?.data) {
+                setTicket(response.data);
+                setShowModal(true);
+            }
             setErrors({});
         } catch (err) {
             const resData = err?.response?.data;
@@ -181,9 +185,15 @@ export default function LandingForm() {
                 </form>
             </div>
 
-            {ticket && (
-                <div className="max-w-xl mx-auto mt-10">
-                    <TicketPreview data={ticket} />
+            {/* Modal Preview */}
+            {showModal && (
+                <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center px-4">
+                    <div className="relative bg-white rounded-xl max-w-lg w-full shadow-lg overflow-hidden p-4">
+                        <button onClick={() => setShowModal(false)} className="absolute top-2 right-2 text-gray-600 hover:text-red-500">
+                            <FaTimes />
+                        </button>
+                        <TicketPreview data={ticket} />
+                    </div>
                 </div>
             )}
         </div>
@@ -210,7 +220,7 @@ function InputField({ name, type = "text", value, error, onChange, placeholder, 
     );
 }
 
-import { FaCheckCircle } from 'react-icons/fa';
+// import { FaCheckCircle } from 'react-icons/fa';
 
 function FileInputField({ name, placeholder, icon, onChange, error }) {
     const [fileName, setFileName] = useState(null);

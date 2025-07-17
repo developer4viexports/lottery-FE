@@ -4,107 +4,89 @@ import {
     FaUsers,
     FaMapMarkerAlt,
     FaCalendarAlt,
+    FaCheckCircle,
 } from "react-icons/fa";
-import bgImage from "../assets/image3.png"; // adjust path if needed
+import bgImage from "../assets/aboutBg.png";
+import riceImage from "../assets/riceProducts.png"; // make sure to have this image
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 export default function About() {
     return (
-        <section
-            className="min-h-screen bg-cover bg-center bg-no-repeat py-12 px-4 sm:px-6 lg:px-10"
-            style={{ backgroundImage: `url(${bgImage})` }}
-        >
-            {/* translucent card */}
-            <div className="max-w-5xl mx-auto bg-white/90 backdrop-blur-md rounded-xl shadow-2xl p-6 sm:p-10">
-                {/* Hero */}
-                <header className="text-center mb-12">
-                    <h1 className="text-3xl sm:text-4xl font-extrabold text-blue-800 mb-4">
-                        About Shri Lal Mahal Group
-                    </h1>
-                    <p className="text-gray-700 max-w-2xl mx-auto">
-                        Since&nbsp;1907 we’ve set the benchmark for food standards worldwide,
-                        pioneering premium&nbsp;
-                        <span className="font-semibold">Basmati Rice</span> and exporting
-                        quality to every continent.
+        <div className="min-h-screen bg-black text-white">
+            <Header />
+            {/* Hero Section */}
+            <section
+                className="relative bg-cover bg-center text-white py-20 px-4 text-center"
+                style={{ backgroundImage: `url(${bgImage})` }}
+            >
+                <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-[#250F0E]/80 to-black/90 z-0" />
+                <div className="relative z-10 max-w-4xl mx-auto">
+                    <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">About Shri Lal Mahal Group</h1>
+                    <p className="text-sm sm:text-base text-gray-200 mb-6">
+                        Congratulations! If your ticket number appears below, submit the claim form<br />
+                        so we can manually verify your entry
                     </p>
-                </header>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto mt-6">
+                        <StatCard icon={<FaCalendarAlt />} label="Founded" value="1907" />
+                        <StatCard icon={<FaUsers />} label="Employees" value="500-1000" />
+                        <StatCard icon={<FaGlobeAsia />} label="Operations" value="5 Continents" />
+                        <StatCard icon={<FaMapMarkerAlt />} label="HQ" value="New Delhi (IN)" />
+                    </div>
+                </div>
+            </section>
 
-                {/* Stats */}
-                <div className="grid gap-8 grid-cols-2 sm:grid-cols-4 text-center mb-14">
-                    <Stat icon={<FaCalendarAlt />} label="Founded" value="1907" />
-                    <Stat icon={<FaUsers />} label="Employees" value="500 – 1 000" />
-                    <Stat icon={<FaGlobeAsia />} label="Operations" value="5 Continents" />
-                    <Stat icon={<FaMapMarkerAlt />} label="HQ" value="New Delhi (IN)" />
+            {/* Journey Section */}
+            <section className="bg-[#0B0B0B] text-white py-16 px-6">
+                <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+                    <div>
+                        <h2 className="text-2xl sm:text-3xl font-bold mb-4">Our Journey</h2>
+                        <p className="text-gray-300 leading-relaxed">
+                            What began as a small business house in 1907 has grown into a multi-national conglomerate —
+                            a trusted name in Food & Beverage Services. Our unwavering commitment to quality and innovation
+                            has propelled Shri Lal Mahal Group into markets across the globe, earning us the title
+                            <strong> “The World Leader in Basmati”.</strong>
+                        </p>
+                    </div>
+                    <img src={riceImage} alt="Shri Lal Mahal Products" className="w-full rounded-lg shadow-lg" />
                 </div>
 
-                {/* History + Mission */}
-                <article className="space-y-8 text-gray-700 leading-relaxed">
-                    <section>
-                        <h2 className="text-2xl font-bold text-blue-700 mb-2">
-                            Our Journey
-                        </h2>
-                        <p>
-                            What began as a small business house in&nbsp;1907 has grown into a
-                            multi-national conglomerate — a trusted name in
-                            <strong> Food &amp; Beverage Services</strong>. Our unwavering
-                            commitment to quality and innovation has propelled Shri Lal Mahal
-                            Group into markets across the globe, earning us the title
-                            <em className="whitespace-nowrap">
-                                “The World Leader in Basmati”
-                            </em>
-                            .
-                        </p>
-                    </section>
+                {/* Standout Section */}
+                <div className="max-w-5xl mx-auto mt-12">
+                    <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center">Why We Stand Out</h2>
+                    <ul className="grid sm:grid-cols-2 gap-6 text-gray-300">
+                        <li className="flex items-start gap-3">
+                            <FaCheckCircle className="mt-1 text-green-500" />
+                            Over <strong>100 years</strong> of heritage & expertise
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <FaCheckCircle className="mt-1 text-green-500" />
+                            Benchmark food-safety and quality standards
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <FaCheckCircle className="mt-1 text-green-500" />
+                            State-of-the-art milling, packaging & supply chain
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <FaCheckCircle className="mt-1 text-green-500" />
+                            Consistently growing global turnover
+                        </li>
+                    </ul>
+                </div>
+            </section>
 
-                    <section>
-                        <h2 className="text-2xl font-bold text-blue-700 mb-2">
-                            Why We Stand Out
-                        </h2>
-                        <ul className="list-disc list-inside space-y-2">
-                            <li>
-                                Over <strong>100&nbsp;years</strong> of heritage &amp; expertise
-                            </li>
-                            <li>
-                                <strong>Benchmark</strong> food-safety and quality standards
-                            </li>
-                            <li>
-                                State-of-the-art milling, packaging &amp; supply chain
-                            </li>
-                            <li>
-                                Consistently growing <strong>global turnover</strong>
-                            </li>
-                        </ul>
-                    </section>
-
-                    <a
-                        href="https://shrilalmahal.org/about-us"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-md transition"
-                    >
-                        Learn more at&nbsp;shrilalmahal.org →
-                    </a>
-                </article>
-
-                {/* Location */}
-                <footer className="mt-10 text-center text-gray-600 text-sm">
-                    Headquarters: B-16, Bhagwan Dass Nagar, Punjabi Bagh, New Delhi 110026 India
-                </footer>
-            </div>
-        </section>
+            {/* Footer */}
+            <Footer />
+        </div>
     );
 }
 
-/* ─────────────────────────────────────────────────────── */
-function Stat({ icon, label, value }) {
+function StatCard({ icon, label, value }) {
     return (
-        <div className="flex flex-col items-center">
-            <div className="text-blue-600 text-3xl mb-2">{icon}</div>
-            <dt className="text-gray-600 text-xs sm:text-sm uppercase tracking-wider">
-                {label}
-            </dt>
-            <dd className="text-lg sm:text-xl font-semibold text-gray-900">
-                {value}
-            </dd>
+        <div className="bg-[#1E1E1E] rounded-lg shadow-md p-4 text-center flex flex-col justify-center items-center ">
+            <div className="text-2xl text-red-500 mb-2">{icon}</div>
+            <div className="text-sm uppercase text-gray-400">{label}</div>
+            <div className="text-lg font-semibold text-white">{value}</div>
         </div>
     );
 }

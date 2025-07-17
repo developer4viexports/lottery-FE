@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import bgImage from "../assets/image3.png"; // adjust path as needed
+import {
+    FaEnvelope,
+    FaPhoneAlt,
+    FaMapMarkerAlt,
+} from "react-icons/fa";
+import bgImage from "../assets/contactBg.png";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 export default function Contact() {
     const [form, setForm] = useState({
@@ -8,7 +15,6 @@ export default function Contact() {
         phone: "",
         message: "",
     });
-
     const [submitted, setSubmitted] = useState(false);
 
     const handleChange = (e) => {
@@ -18,100 +24,116 @@ export default function Contact() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // TODO: send form data to backend or email handler
         setSubmitted(true);
     };
 
     return (
-        <section
-            className="min-h-screen bg-cover bg-center bg-no-repeat py-12 px-4 sm:px-6 lg:px-8"
-            style={{ backgroundImage: `url(${bgImage})` }}
-        >
-            <div className="max-w-3xl mx-auto bg-white/90 backdrop-blur-md p-6 sm:p-10 rounded-xl shadow-2xl">
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-blue-800 text-center mb-6">
-                    📬 Contact Us
-                </h1>
-                <p className="text-center text-gray-700 mb-8">
-                    We'd love to hear from you. Whether you have a question about your ticket, need assistance, or just want to say hello — our team is ready to help!
-                </p>
-
-                {!submitted ? (
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                        <ContactInput
-                            label="Full Name"
-                            name="name"
-                            placeholder="Your full name"
-                            value={form.name}
-                            onChange={handleChange}
-                        />
-                        <ContactInput
-                            label="Email"
-                            name="email"
-                            type="email"
-                            placeholder="you@example.com"
-                            value={form.email}
-                            onChange={handleChange}
-                        />
-                        <ContactInput
-                            label="Phone Number"
-                            name="phone"
-                            placeholder="+91-XXXXXXXXXX"
-                            value={form.phone}
-                            onChange={handleChange}
-                        />
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Your Message
-                            </label>
-                            <textarea
-                                name="message"
-                                rows="4"
-                                required
-                                placeholder="Type your message here..."
-                                value={form.message}
-                                onChange={handleChange}
-                                className="w-full px-4 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-300"
-                            />
+        <div className="min-h-screen bg-black text-white">
+            <Header />
+            {/* Hero */}
+            <section
+                className="relative bg-cover bg-center bg-no-repeat py-16 px-6"
+                style={{ backgroundImage: `url(${bgImage})` }}
+            >
+                <div className="absolute inset-0 bg-gradient-to-r from-black via-red-900/80 to-black z-0" />
+                <div className="relative z-10 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-start">
+                    {/* Contact Info */}
+                    <div>
+                        <h2 className="text-4xl font-bold mb-6">Contacts Us</h2>
+                        <p className="text-gray-300 mb-8 max-w-md">
+                            We'd love to hear from you. Whether you have a question about your ticket,
+                            need assistance, or just want to say hello — our team is ready to help!
+                        </p>
+                        <div className="space-y-5 text-lg">
+                            <p className="flex items-center gap-3">
+                                <FaEnvelope className="text-red-500" />
+                                <a href="mailto:support@shrilalmahal.com" className="hover:underline">
+                                    support@shrilalmahal.com
+                                </a>
+                            </p>
+                            <p className="flex items-center gap-3">
+                                <FaPhoneAlt className="text-red-500" />
+                                +91-9999-999999
+                            </p>
+                            <p className="flex items-start gap-3">
+                                <FaMapMarkerAlt className="text-red-500 mt-1" />
+                                <span>
+                                    Headquarters: B-16, Bhagwan Dass Nagar, Punjabi Bagh, <br />
+                                    New Delhi 110026 India
+                                </span>
+                            </p>
                         </div>
-                        <button
-                            type="submit"
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition duration-200"
-                        >
-                            Send Message
-                        </button>
-                    </form>
-                ) : (
-                    <div className="bg-green-100 text-green-800 text-center p-6 rounded-md shadow">
-                        <h3 className="text-xl font-semibold mb-2">✅ Message Sent!</h3>
-                        <p>Thank you for reaching out. Our team will respond to you shortly.</p>
                     </div>
-                )}
 
-                <div className="mt-10 text-center text-gray-600 text-sm">
-                    <p>📍 Shri Lal Mahal Group Headquarters</p>
-                    <p>B-16, Bhagwan Dass Nagar, Punjabi Bagh, New Delhi 110026, India</p>
-                    <p className="mt-1">📞 +91-99999-99999 &nbsp; | &nbsp; ✉️ support@shrilalmahal.com</p>
+                    {/* Contact Form */}
+                    <div className="bg-gradient-to-br from-gray-100 to-orange-100 text-black rounded-xl shadow-xl p-6 sm:p-8">
+                        <h3 className="text-xl sm:text-2xl font-semibold mb-6 text-center">
+                            Feel free to ask your question.
+                        </h3>
+                        {!submitted ? (
+                            <form onSubmit={handleSubmit} className="space-y-5">
+                                <ContactInput
+                                    name="name"
+                                    placeholder="Full Name"
+                                    value={form.name}
+                                    onChange={handleChange}
+                                />
+                                <ContactInput
+                                    name="phone"
+                                    placeholder="Phone Number"
+                                    value={form.phone}
+                                    onChange={handleChange}
+                                />
+                                <ContactInput
+                                    name="email"
+                                    type="email"
+                                    placeholder="Email"
+                                    value={form.email}
+                                    onChange={handleChange}
+                                />
+                                <div>
+                                    <textarea
+                                        name="message"
+                                        required
+                                        rows={4}
+                                        value={form.message}
+                                        onChange={handleChange}
+                                        placeholder="Your Message"
+                                        className="w-full rounded-md border border-gray-300 px-4 py-2 text-sm"
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="w-full bg-black hover:bg-gray-800 text-white py-2 rounded-md font-semibold"
+                                >
+                                    Send Message
+                                </button>
+                            </form>
+                        ) : (
+                            <div className="text-center p-6 text-green-700 font-medium">
+                                ✅ Message Sent! We'll get back to you soon.
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+
+            {/* Footer */}
+            <Footer />
+        </div>
     );
 }
 
-function ContactInput({ label, name, placeholder, value, onChange, type = "text" }) {
+function ContactInput({ name, placeholder, value, onChange, type = "text" }) {
     return (
-        <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-                {label}
-            </label>
-            <input
-                type={type}
-                name={name}
-                required
-                value={value}
-                placeholder={placeholder}
-                onChange={onChange}
-                className="w-full px-4 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-300"
-            />
-        </div>
+        <input
+            type={type}
+            name={name}
+            required
+            value={value}
+            placeholder={placeholder}
+            onChange={onChange}
+            className="w-full rounded-md border border-gray-300 px-4 py-2 text-sm"
+        />
     );
 }

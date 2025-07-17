@@ -11,7 +11,7 @@ export default function HeroSection() {
             <div className="max-w-7xl w-full flex flex-col md:flex-row items-center justify-between gap-10">
 
                 {/* Left: Animated Heading */}
-                <div className="md:w-1/2 text-center md:text-left space-y-2 md:space-y-4">
+                <div className="md:w-1/2 text-center md:text-left space-y-2 md:space-y-4 pt-24">
                     <motion.h2
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -27,7 +27,7 @@ export default function HeroSection() {
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.9 }}
                         viewport={{ once: true }}
-                        className="text-4xl sm:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-yellow-300 via-white to-pink-400 text-transparent bg-clip-text"
+                        className="text-4xl sm:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-yellow-300 via-white to-pink-400 text-transparent bg-clip-text pb-4"
                     >
                         Win Big Today!
                     </motion.h1>
