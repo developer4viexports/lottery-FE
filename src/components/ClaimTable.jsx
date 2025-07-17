@@ -9,7 +9,7 @@ export default function ClaimAdminTable({ token }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [previewUrl, setPreviewUrl] = useState(null);
 
-    const FILE_BASE_URL = 'http://localhost:5000';
+    const FILE_BASE_URL = 'https://api.lottery.tenderbaba.com';
 
     useEffect(() => {
         const fetchClaims = async () => {
@@ -199,7 +199,7 @@ export default function ClaimAdminTable({ token }) {
                     <thead className="bg-gray-100 text-left">
                         <tr>
                             {[
-                                'S. No', 'Ticket ID', 'Name', 'Email', 'Phone', 
+                                'S. No', 'Ticket ID', 'Name', 'Email', 'Phone',
                                 'Instagram', 'Ticket File', 'Proof File', 'Submitted At'
                             ].map((h, i) => (
                                 <th key={i} className="p-2 border">{h}</th>
