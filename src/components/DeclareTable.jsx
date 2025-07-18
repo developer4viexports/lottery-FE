@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
 
-const BASE_URL = 'https://api.lottery.tenderbaba.com/api';
+const BASE_URL = 'http://localhost:5000/api';
 
 export default function DeclareTable({ token }) {
     const [winners, setWinners] = useState([]);
     const [form, setForm] = useState({ ticketID: '', id: null });
     const [rows, setRows] = useState([
-        { matchType: '7/7', regular: '', super: '' },
-        { matchType: '6/7', regular: '', super: '' },
-        { matchType: '5/7', regular: '', super: '' },
-        { matchType: '4/7', regular: '', super: '' },
-        { matchType: 'Bonus Entry', regular: '', super: '' },
+        { matchType: '7/7', regular: '', super: '', regId: null, superId: null },
+        { matchType: '6/7', regular: '', super: '', regId: null, superId: null },
+        { matchType: '5/7', regular: '', super: '', regId: null, superId: null },
+        { matchType: '4/7', regular: '', super: '', regId: null, superId: null },
+        { matchType: 'Bonus Entry', regular: '', super: '', regId: null, superId: null },
     ]);
     const [loading, setLoading] = useState(false);
 
-    // Fetch Winners
     const fetchWinners = async () => {
         try {
             const res = await fetch(`${BASE_URL}/winners`, {
@@ -31,32 +30,29 @@ export default function DeclareTable({ token }) {
         }
     };
 
-    // Initial Load
     useEffect(() => {
         fetchWinners();
-
-        // Fetch Prize Tiers
         fetch(`${BASE_URL}/prize-tiers`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then(res => res.json())
-            .then(data => {
-                if (Array.isArray(data)) {
-                    const updated = rows.map(row => {
-                        const reg = data.find(p => p.matchType === row.matchType && p.ticketType === 'regular');
-                        const sup = data.find(p => p.matchType === row.matchType && p.ticketType === 'super');
-                        return {
-                            ...row,
-                            regular: reg?.prize || '',
-                            super: sup?.prize || '',
-                        };
-                    });
-                    setRows(updated);
-                }
+            .then(resp => {
+                const data = resp?.data || [];
+                const updated = rows.map(row => {
+                    const reg = data.find(p => p.matchType === row.matchType && p.ticketType === 'regular');
+                    const sup = data.find(p => p.matchType === row.matchType && p.ticketType === 'super');
+                    return {
+                        ...row,
+                        regular: reg?.prize || '',
+                        regId: reg?.id || null,
+                        super: sup?.prize || '',
+                        superId: sup?.id || null,
+                    };
+                });
+                setRows(updated);
             });
     }, [token]);
 
-    // Handle Winner Submit
     const handleSubmit = async e => {
         e.preventDefault();
         try {
@@ -69,10 +65,7 @@ export default function DeclareTable({ token }) {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({
-                    name: 'N/A',
-                    ticketID: form.ticketID,
-                }),
+                body: JSON.stringify({ name: 'N/A', ticketID: form.ticketID }),
             });
 
             const data = await res.json();
@@ -94,9 +87,7 @@ export default function DeclareTable({ token }) {
         try {
             const res = await fetch(`${BASE_URL}/winners/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: { Authorization: `Bearer ${token}` },
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || 'Delete failed');
@@ -106,7 +97,6 @@ export default function DeclareTable({ token }) {
         }
     };
 
-    // Prize Tier Handlers
     const handleChange = (index, field, value) => {
         const updated = [...rows];
         updated[index][field] = value;
@@ -117,32 +107,32 @@ export default function DeclareTable({ token }) {
         setLoading(true);
         try {
             for (const row of rows) {
-                await Promise.all([
-                    fetch(`${BASE_URL}/prize-tiers`, {
-                        method: 'POST',
+                const endpoints = [
+                    {
+                        id: row.regId,
+                        body: { matchType: row.matchType, ticketType: 'regular', prize: row.regular },
+                    },
+                    {
+                        id: row.superId,
+                        body: { matchType: row.matchType, ticketType: 'super', prize: row.super },
+                    },
+                ];
+
+                for (const entry of endpoints) {
+                    const method = entry.id ? 'PUT' : 'POST';
+                    const url = entry.id
+                        ? `${BASE_URL}/prize-tiers/${entry.id}`
+                        : `${BASE_URL}/prize-tiers`;
+
+                    await fetch(url, {
+                        method,
                         headers: {
                             'Content-Type': 'application/json',
                             Authorization: `Bearer ${token}`,
                         },
-                        body: JSON.stringify({
-                            matchType: row.matchType,
-                            ticketType: 'regular',
-                            prize: row.regular,
-                        }),
-                    }),
-                    fetch(`${BASE_URL}/prize-tiers`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${token}`,
-                        },
-                        body: JSON.stringify({
-                            matchType: row.matchType,
-                            ticketType: 'super',
-                            prize: row.super,
-                        }),
-                    }),
-                ]);
+                        body: JSON.stringify(entry.body),
+                    });
+                }
             }
             alert('Prizes saved successfully!');
         } catch (err) {
@@ -154,10 +144,8 @@ export default function DeclareTable({ token }) {
 
     return (
         <div className="pb-24">
-            {/* WINNING TICKETS SECTION */}
             <div className="p-6 sm:p-8 max-w-4xl mx-auto bg-white rounded-lg shadow-md">
                 <h2 className="text-2xl font-bold text-blue-800 mb-6 text-center">🎫 Manage Winning Tickets</h2>
-
                 <form
                     onSubmit={handleSubmit}
                     className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 items-end"
@@ -213,7 +201,6 @@ export default function DeclareTable({ token }) {
                 )}
             </div>
 
-            {/* PRIZE DECLARATION SECTION */}
             <div className="p-6 max-w-4xl mx-auto mt-10 bg-white rounded-lg shadow">
                 <h2 className="text-2xl font-bold mb-6 text-center text-green-700">🏆 Set Prize Tiers</h2>
                 <table className="w-full table-auto border border-gray-300 mb-4">

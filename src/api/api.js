@@ -1,4 +1,4 @@
-const BASE_URL = 'https://api.lottery.tenderbaba.com/api';
+const BASE_URL = 'http://localhost:5000/api';
 
 export const submitTicket = async (formData) => {
     const res = await fetch(`${BASE_URL}/tickets/tickets`, {
@@ -64,3 +64,11 @@ export const loginAdmin = async (email, password) => {
 
     return data; // includes token and admin info
 };
+
+export const getPrizeTiers = async () => {
+    const res = await fetch(`${BASE_URL}/prize-tiers`);
+    const data = await res.json();
+    console.log('DATA-=-=-', data.data);
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch prize tiers');
+    return data.data;
+}
