@@ -123,6 +123,10 @@ export default function CompetitionAllDetails() {
                 Prize: item.prizeType || '-',
                 Issued: item.issueDate || '-',
                 Expiry: item.expiryDate || '-',
+                FollowProof: item.followProof ? BASE_URL + item.followProof : '',
+                PurchaseProof: item.purchaseProof ? BASE_URL + item.purchaseProof : '', 
+                TicketImageURL: item.ticketImage ? BASE_URL + item.ticketImage : '',
+                
             } : {
                 TicketID: item.ticketID,
                 Name: item.name,
@@ -227,6 +231,7 @@ export default function CompetitionAllDetails() {
                                     <th className="p-2 border">Proof</th>
                                     <th className="p-2 border">Follow Proof</th>
                                     <th className="p-2 border">Purchase Proof</th>
+                                    <th className="p-2 border">Ticket Image</th> {/* ✅ New column */}
                                     <th className="p-2 border">Created At</th>
                                 </tr>
                             </thead>
@@ -243,6 +248,7 @@ export default function CompetitionAllDetails() {
                                         <td className="p-2 border">{ticket.prizeType || '-'}</td>
                                         <td className="p-2 border">{ticket.issueDate}</td>
                                         <td className="p-2 border">{ticket.expiryDate}</td>
+
                                         {['proofImage', 'followProof', 'purchaseProof'].map((key, j) => (
                                             <td key={j} className="p-2 border">
                                                 {ticket[key] ? (
@@ -257,10 +263,26 @@ export default function CompetitionAllDetails() {
                                                 )}
                                             </td>
                                         ))}
+
+                                        {/* ✅ Ticket image column */}
+                                        <td className="p-2 border">
+                                            {ticket.ticketImage ? (
+                                                <button
+                                                    onClick={() => setPreviewUrl(BASE_URL + ticket.ticketImage)}
+                                                    className="text-blue-600 underline hover:text-blue-800"
+                                                >
+                                                    View
+                                                </button>
+                                            ) : (
+                                                <span className="text-gray-400 italic">No image</span>
+                                            )}
+                                        </td>
+
                                         <td className="p-2 border">{formatDateTime(ticket.createdAt)}</td>
                                     </tr>
                                 ))}
                             </tbody>
+
                         </table>
                     </div>
                 ) : (

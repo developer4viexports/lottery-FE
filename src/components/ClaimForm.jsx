@@ -115,14 +115,30 @@ export default function ClaimForm({ onSubmitted }) {
                         placeholder="Email"
                         icon={<FaEnvelope />}
                     />
-                    <InputField
-                        name="instagram"
-                        value={form.instagram}
-                        error={errors.instagram}
-                        onChange={handleChange}
-                        placeholder="Instagram Handle"
-                        icon={<FaInstagram />}
-                    />
+                    <div>
+                        <div className="relative">
+                            <FaInstagram className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
+                            <input
+                                type="text"
+                                name="instagram"
+                                value={form.instagram}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (!value.startsWith('@')) {
+                                        setForm(prev => ({ ...prev, instagram: '@' + value.replace(/@/g, '') }));
+                                    } else {
+                                        setForm(prev => ({ ...prev, instagram: value }));
+                                    }
+                                    setErrors(prev => ({ ...prev, instagram: '' }));
+                                }}
+                                placeholder="@yourhandle"
+                                className="pl-10 pr-4 py-2 w-full border rounded-md shadow-sm focus:ring focus:ring-blue-300 text-black"
+                            />
+                        </div>
+                        {errors.instagram && <p className="text-red-500 text-sm mt-1">{errors.instagram}</p>}
+                    </div>
+
+
                     <FileInputField
                         name="ticketImage"
                         placeholder="Upload Ticket Screenshot"
@@ -208,7 +224,7 @@ function FileInputField({ name, placeholder, icon, onChange, error }) {
 
     return (
         <div>
-            <div className="relative w-full bg-white rounded-full border px-4 py-2 flex items-center justify-between cursor-pointer overflow-hidden">
+            <label className="relative w-full bg-white rounded-full border px-4 py-2 flex items-center justify-between cursor-pointer overflow-hidden">
                 <div className="flex items-center gap-2">
                     <span className="text-gray-600">{icon}</span>
                     <span className="text-gray-700 text-sm">{placeholder}</span>
@@ -228,9 +244,9 @@ function FileInputField({ name, placeholder, icon, onChange, error }) {
                     name={name}
                     accept="image/*,video/*,.pdf"
                     onChange={handleFileChange}
-                    className="absolute left-0 top-0 w-full h-full opacity-0 cursor-pointer"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-            </div>
+            </label>
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>
     );

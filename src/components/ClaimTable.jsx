@@ -200,7 +200,7 @@ export default function ClaimAdminTable({ token }) {
                         <tr>
                             {[
                                 'S. No', 'Ticket ID', 'Name', 'Email', 'Phone',
-                                'Instagram', 'Ticket File', 'Proof File', 'Submitted At'
+                                'Instagram', 'Ticket Image', 'Proof', 'Submitted At'
                             ].map((h, i) => (
                                 <th key={i} className="p-2 border">{h}</th>
                             ))}

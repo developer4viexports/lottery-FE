@@ -35,6 +35,39 @@ export const submitClaim = async (formData) => {
     return data;
 };
 
+export const uploadTicketImage = async (ticketId, canvas) => {
+    return new Promise((resolve, reject) => {
+        canvas.toBlob(async (blob) => {
+            const formData = new FormData();
+            formData.append('ticketId', ticketId);
+            formData.append('image', blob, `${ticketId}.png`);
+
+            try {
+                const res = await fetch(`${BASE_URL}/tickets/upload-ticket-image`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                const result = await res.json();
+                if (!res.ok) {
+                    return reject(new Error(result.message || 'Upload failed'));
+                }
+                resolve(result);
+            } catch (error) {
+                reject(error);
+            }
+        }, 'image/png');
+    });
+};
+
+export const sendTicketEmail = async (ticketId) => {
+    const res = await fetch(`${BASE_URL}/tickets/send-email/${ticketId}`, {
+        method: 'POST',
+    });
+
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.message || 'Failed to send email');
+    return result;
+};
 
 export const getWinningTickets = async (token) => {
     const res = await fetch(`${BASE_URL}/winners`, {
@@ -68,7 +101,6 @@ export const loginAdmin = async (email, password) => {
 export const getPrizeTiers = async () => {
     const res = await fetch(`${BASE_URL}/prize-tiers`);
     const data = await res.json();
-    console.log('DATA-=-=-', data.data);
     if (!res.ok) throw new Error(data.message || 'Failed to fetch prize tiers');
     return data.data;
 }

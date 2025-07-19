@@ -1,8 +1,10 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import html2canvas from 'html2canvas';
+import { uploadTicketImage, sendTicketEmail } from '../api/api.js';
 
 export default function TicketPreview({ data }) {
     const ref = useRef();
+    const hasUploaded = useRef(false);
 
     const downloadTicket = async () => {
         const canvas = await html2canvas(ref.current);
@@ -11,6 +13,29 @@ export default function TicketPreview({ data }) {
         link.href = canvas.toDataURL();
         link.click();
     };
+
+    useEffect(() => {
+        if (data?.id && ref.current && !hasUploaded.current) {
+            html2canvas(ref.current, { scale: 2 }).then((canvas) => {
+                uploadTicketImage(data.id, canvas)
+                    .then(async (res) => {
+                        console.log('✅ Uploaded ticket image:', res);
+                        hasUploaded.current = true;
+
+                        // 🚀 Send email with ticket attachment
+                        setTimeout(async () => {
+                            try {
+                                const result = await sendTicketEmail(data.id);
+                                console.log('📧 Email sent:', result.message);
+                            } catch (err) {
+                                console.error('❌ Failed to send email:', err.message);
+                            }
+                        }, 2000); // ⏳ Wait 500ms
+                    })
+                    .catch(err => console.error('❌ Upload failed:', err));
+            });
+        }
+    }, [data]);
 
     return (
         <div className="mt-10 text-center px-4">
@@ -36,7 +61,7 @@ export default function TicketPreview({ data }) {
                     <p><strong>Name:</strong> {data.name}</p>
                     <p><strong>Email:</strong> {data.email}</p>
                     <p><strong>Instagram:</strong> {data.instagram}</p>
-                    <p><strong>Ticket ID:</strong> <span className="text-blue-700 font-semibold">{data.id}</span></p>
+                    <p><strong>Ticket ID:</strong> <span className="text-blue-700 font-semibold">{data.ticketID}</span></p>
                     <p><strong>Issued:</strong> {data.issueDate}</p>
                     <p><strong>Expires:</strong> {data.expiryDate}</p>
                 </div>

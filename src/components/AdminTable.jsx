@@ -105,7 +105,8 @@ export default function AdminTable({ token }) {
             Expiry: t.expiryDate || '-',
             CreatedAt: formatDateTime(t.createdAt),
             ProofImageURL: t.proofImage ? FILE_BASE_URL + t.proofImage : '',
-            PurchaseProofURL: t.purchaseProof ? FILE_BASE_URL + t.purchaseProof : ''
+            PurchaseProofURL: t.purchaseProof ? FILE_BASE_URL + t.purchaseProof : '',
+            TicketImageURL: t.ticketImage ? FILE_BASE_URL + t.ticketImage : ''
         }));
 
         const ws = XLSX.utils.json_to_sheet(formatted);
@@ -209,7 +210,7 @@ export default function AdminTable({ token }) {
                             {[
                                 "S. No", "Name", "Email", "Phone", "Ticket ID", "Numbers",
                                 "Super", "Prize", "Issued", "Expiry", "Proof", "Follow Proof",
-                                "Purchase Proof", "Created At"
+                                "Purchase Proof", "Ticket Image", "Created At"
                             ].map((header, idx) => (
                                 <th key={idx} className="p-2 border">{header}</th>
                             ))}
@@ -228,6 +229,8 @@ export default function AdminTable({ token }) {
                                 <td className="p-2 border">{t.prizeType || '-'}</td>
                                 <td className="p-2 border">{t.issueDate}</td>
                                 <td className="p-2 border">{t.expiryDate}</td>
+
+                                {/* Proof files */}
                                 {['proofImage', 'followProof', 'purchaseProof'].map((key, j) => (
                                     <td key={j} className="p-2 border">
                                         {t[key] ? (
@@ -242,10 +245,26 @@ export default function AdminTable({ token }) {
                                         )}
                                     </td>
                                 ))}
+
+                                {/* Ticket Image */}
+                                <td className="p-2 border">
+                                    {t.ticketImage ? (
+                                        <button
+                                            onClick={() => setPreviewUrl(FILE_BASE_URL + t.ticketImage)}
+                                            className="text-blue-600 underline hover:text-blue-800"
+                                        >
+                                            View
+                                        </button>
+                                    ) : (
+                                        <span className="text-gray-400 italic">No image</span>
+                                    )}
+                                </td>
+
                                 <td className="p-2 border">{formatDateTime(t.createdAt)}</td>
                             </tr>
                         ))}
                     </tbody>
+
                 </table>
             </div>
         </div>

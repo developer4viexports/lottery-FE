@@ -125,26 +125,6 @@ export default function WinningCombination({ token }) {
         }
     };
 
-    const handleDelete = async () => {
-        if (!window.confirm('Delete the current winning combination?')) return;
-        setLoading(true);
-        try {
-            const res = await fetch(`${BASE_URL}/api/winning-combo`, {
-                method: 'DELETE',
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message || 'Deletion failed');
-            setSuccess('Winning combination deleted.');
-            setCurrentCombination(null);
-            await fetchData();
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const handleEndManually = async () => {
         if (!window.confirm('End this competition manually?')) return;
         setLoading(true);
@@ -252,7 +232,6 @@ export default function WinningCombination({ token }) {
                             <div className="flex gap-2 text-sm">
                                 <button onClick={handleEdit} className="text-blue-600">Edit</button>
                                 <button onClick={handleEndManually} className="text-orange-600">End</button>
-                                <button onClick={handleDelete} className="text-red-600">Delete</button>
                             </div>
                         )}
                     </div>
