@@ -72,19 +72,17 @@ export default function TicketPreview({ data }) {
 
                     <div className="text-center mb-5">
                         <p className="text-rose-700 font-semibold mb-2">Your Lucky Numbers:</p>
-                        <div className="flex justify-between flex-wrap md:flex-nowrap gap-2 max-w-xs sm:max-w-sm mx-auto">
+                        <div className="flex justify-center gap-2 flex-wrap">
                             {data.numbers.map((num, idx) => (
                                 <div
                                     key={idx}
-                                    className="flex-1 min-w-[2rem] h-10 sm:h-12 rounded-md border border-rose-500 bg-white text-rose-700 flex items-center justify-center text-base sm:text-lg font-bold shadow-sm"
+                                    className="w-12 h-12 rounded-md border border-rose-500 bg-white text-rose-700 flex items-center justify-center text-lg font-bold shadow-sm"
                                 >
                                     {num}
                                 </div>
                             ))}
                         </div>
                     </div>
-
-
 
                     <div className="text-xs text-gray-800 mt-6 space-y-2 text-left">
                         <p>📌 Make sure you’ve completed all tasks to claim your prize!</p>
