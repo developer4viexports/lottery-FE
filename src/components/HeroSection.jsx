@@ -1,40 +1,36 @@
 import React from "react";
 import LandingForm from "./LandingForm";
-import { motion } from "framer-motion";
 
 export default function HeroSection() {
     return (
-        <section className="w-full h-[800px] flex items-center justify-center px-4 pt-0 pb-16 bg-[url('/confetti-bg.png')] bg-cover bg-center">
+        <section className="relative w-full bg-[#FFF7E8] py-12 md:py-20 overflow-hidden">
 
+            {/* Diagonal Top Slice - Made more subtle */}
+            <div
+                className="absolute top-0 left-0 w-full h-20 bg-white z-0"
+                style={{
+                    clipPath: 'polygon(0 0, 100% 0, 100% 85%, 0% 100%)',
+                }}
+            />
 
+            {/* Content */}
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-10 items-start pt-12">
 
-            <div className="max-w-7xl w-full flex flex-col md:flex-row items-center justify-between gap-10">
-
-                {/* Left: Animated Heading */}
-                <div className="md:w-1/2 text-center md:text-left space-y-2 md:space-y-4 pt-24">
-                    <motion.h2
-                        initial={{ opacity: 0, y: 40 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        viewport={{ once: true }}
-                        className="text-lg sm:text-xl font-semibold tracking-wide text-white"
-                    >
-                        SHRILALMAHAL LUCKY TICKET
-                    </motion.h2>
-
-                    <motion.h1
-                        initial={{ opacity: 0, y: 40 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.9 }}
-                        viewport={{ once: true }}
-                        className="text-4xl sm:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-yellow-300 via-white to-pink-400 text-transparent bg-clip-text pb-4"
-                    >
-                        Win Big Today!
-                    </motion.h1>
+                {/* Left Text */}
+                <div className="text-left py-5 px-4">
+                    <h2 className="text-3xl font-bold text-[#3A1F1F] mb-4">Lucky Ticket Form</h2>
+                    <p className="text-gray-800 leading-relaxed text-base">
+                        an exclusive opportunity to enter a realm where fortune favors the bold. This Lucky Ticket Form
+                        is your portal to potential rewards, unforeseen surprises, and life-enhancing prizes. By completing
+                        this form, you embark on a serendipitous journey defined by chance, destiny, and unprecedented
+                        opportunity. Engage with curiosity, complete with intention, and prepare to transform your ordinary
+                        day into an extraordinary one. Your moment of serendipity is just a few keystrokes away.<br /><br />
+                        Don't just believe in luck—activate it. Your lucky break begins now
+                    </p>
                 </div>
 
-                {/* Right: Landing Form */}
-                <div className="md:w-1/2">
+                {/* Right: Form */}
+                <div className="px-4">
                     <LandingForm />
                 </div>
             </div>

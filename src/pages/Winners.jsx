@@ -6,6 +6,8 @@ import ClaimFormSection from '../components/ClaimFormSection';
 import Footer from '../components/Footer';
 import { getWinningTickets } from '../api/api';
 import Header from '../components/Header';
+import background from '../assets/homeBg.png'; // Make sure this path is correct
+
 
 export default function Winners() {
     const [winners, setWinners] = useState([]);
@@ -17,12 +19,16 @@ export default function Winners() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-[#1b0e0b] text-white">
-            <Header />
-            <WinnerHero />
-            <TicketDisplay winners={winners} />
+        <>
+            <div className="w-full bg-cover bg-center bg-no-repeat"
+                style={{ backgroundImage: `url(${background})` }}
+            >
+                <Header />
+                <WinnerHero />
+                <TicketDisplay winners={winners} />
+            </div>
             <ClaimFormSection />
             <Footer />
-        </div>
+        </>
     );
 }

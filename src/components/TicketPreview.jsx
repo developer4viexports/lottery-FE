@@ -1,15 +1,16 @@
 import React, { useRef, useEffect } from 'react';
 import html2canvas from 'html2canvas';
 import { uploadTicketImage, sendTicketEmail } from '../api/api.js';
+import ticketBg from '../assets/ticketBg.png';
 
 export default function TicketPreview({ data }) {
     const ref = useRef();
     const hasUploaded = useRef(false);
 
     const downloadTicket = async () => {
-        const canvas = await html2canvas(ref.current);
+        const canvas = await html2canvas(ref.current, { scale: 2 });
         const link = document.createElement('a');
-        link.download = `${data.id}.png`;
+        link.download = `${data.ticketID}.png`;
         link.href = canvas.toDataURL();
         link.click();
     };
@@ -18,19 +19,11 @@ export default function TicketPreview({ data }) {
         if (data?.id && ref.current && !hasUploaded.current) {
             html2canvas(ref.current, { scale: 2 }).then((canvas) => {
                 uploadTicketImage(data.id, canvas)
-                    .then(async (res) => {
-                        console.log('✅ Uploaded ticket image:', res);
+                    .then(async () => {
                         hasUploaded.current = true;
-
-                        // 🚀 Send email with ticket attachment
-                        setTimeout(async () => {
-                            try {
-                                const result = await sendTicketEmail(data.id);
-                                console.log('📧 Email sent:', result.message);
-                            } catch (err) {
-                                console.error('❌ Failed to send email:', err.message);
-                            }
-                        }, 2000); // ⏳ Wait 500ms
+                        // Optionally enable email sending:
+                        // const result = await sendTicketEmail(data.id);
+                        // console.log('📧 Email sent:', result.message);
                     })
                     .catch(err => console.error('❌ Upload failed:', err));
             });
@@ -38,58 +31,67 @@ export default function TicketPreview({ data }) {
     }, [data]);
 
     return (
-        <div className="mt-10 text-center px-4">
+        <div className="mt-10 px-4 text-center">
             <div
                 ref={ref}
-                className={`bg-white shadow-2xl border-4 ${data.isSuperTicket ? 'border-purple-600' : 'border-yellow-400'} rounded-xl px-6 py-6 max-w-md mx-auto font-mono relative`}
+                className="relative mx-auto max-w-sm shadow-xl font-sans text-gray-800 overflow-hidden"
+                style={{
+                    borderRadius: '2rem',
+                    backgroundImage: `url(${ticketBg})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    padding: '24px',
+                }}
             >
-                <h2 className="text-center text-lg font-bold mb-2">
-                    {data.isSuperTicket ? (
-                        <span className="text-purple-700">✨ SHRILALMAHAL SUPER TICKET ✨</span>
-                    ) : (
-                        <span className="text-yellow-700">🎉 SHRILALMAHAL LUCKY TICKET 🎉</span>
+                {/* Side notches */}
+                <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-md z-10"></div>
+                <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-md z-10"></div>
+
+                <div className="relative z-20">
+                    <h2 className="text-center text-lg font-bold text-rose-700 bg-rose-100 inline-block px-4 py-1 rounded-full mb-3">
+                        Shrilalmahal Lucky Ticket
+                    </h2>
+
+                    {data.isSuperTicket && (
+                        <div className="text-sm text-purple-700 bg-purple-100 px-3 py-1 rounded-full mb-4 inline-block font-medium">
+                            💎 Super Ticket – 2X Reward!
+                        </div>
                     )}
-                </h2>
 
-                {data.isSuperTicket && (
-                    <div className="bg-purple-100 text-purple-800 text-sm p-2 rounded mb-3">
-                        🚀 SuperTicket - 2X Prize Value on Wins!
+                    <div className="grid grid-cols-2 gap-y-3 text-left text-sm mb-5">
+                        <div><strong>Name</strong><p>{data.name}</p></div>
+                        <div><strong>Email</strong><p>{data.email}</p></div>
+                        <div><strong>Instagram</strong><p>{data.instagram}</p></div>
+                        <div><strong>Ticket ID</strong><p>{data.ticketID}</p></div>
+                        <div><strong>Issued</strong><p>{data.issueDate}</p></div>
+                        <div><strong>Expires</strong><p>{data.expiryDate}</p></div>
                     </div>
-                )}
 
-                <div className="text-left space-y-1 text-sm sm:text-base">
-                    <p><strong>Name:</strong> {data.name}</p>
-                    <p><strong>Email:</strong> {data.email}</p>
-                    <p><strong>Instagram:</strong> {data.instagram}</p>
-                    <p><strong>Ticket ID:</strong> <span className="text-blue-700 font-semibold">{data.ticketID}</span></p>
-                    <p><strong>Issued:</strong> {data.issueDate}</p>
-                    <p><strong>Expires:</strong> {data.expiryDate}</p>
-                </div>
+                    <hr className="border-dashed my-4 border-gray-300" />
 
-                <div className="mt-4 text-center">
-                    <p className="font-semibold text-sm mb-5">Your Lucky Numbers:</p>
-                    <div className="flex justify-center gap-3 flex-wrap">
-                        {data.numbers.map((num, idx) => (
-                            <span
-                                key={idx}
-                                className={`border px-3 py-1 rounded-md shadow-sm text-sm flex items-center justify-center ${data.isSuperTicket
-                                    ? 'bg-purple-100 border-purple-400 text-purple-800'
-                                    : 'bg-blue-100 border-blue-400 text-blue-800'
-                                    }`}
-                            >
-                                {num}
-                            </span>
-                        ))}
+                    <div className="text-center mb-5">
+                        <p className="text-rose-700 font-semibold mb-2">Your Lucky Numbers:</p>
+                        <div className="flex justify-between flex-wrap md:flex-nowrap gap-2 max-w-xs sm:max-w-sm mx-auto">
+                            {data.numbers.map((num, idx) => (
+                                <div
+                                    key={idx}
+                                    className="flex-1 min-w-[2rem] h-10 sm:h-12 rounded-md border border-rose-500 bg-white text-rose-700 flex items-center justify-center text-base sm:text-lg font-bold shadow-sm"
+                                >
+                                    {num}
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
 
-                <hr className="my-4 border-dashed" />
 
-                <div className="text-xs sm:text-sm leading-snug text-gray-700 text-left space-y-1">
-                    <p>✅ Follow <strong>@shrilalmahalgroup</strong> on Instagram</p>
-                    <p>✅ Comment your ticket number</p>
-                    <p>✅ Share ticket in story & tag 5 friends</p>
-                    <p className="mt-2 text-red-600 font-medium">🔔 Make sure you’ve completed all tasks to claim your prize!</p>
+
+                    <div className="text-xs text-gray-800 mt-6 space-y-2 text-left">
+                        <p>📌 Make sure you’ve completed all tasks to claim your prize!</p>
+                        <p>📸 Follow <strong>@shrilalmahalgroup</strong> on Instagram</p>
+                        <p>📝 Comment your ticket number</p>
+                        <p>📤 Share ticket in story & tag 5 friends</p>
+                    </div>
                 </div>
             </div>
 

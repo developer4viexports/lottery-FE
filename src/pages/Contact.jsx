@@ -4,7 +4,7 @@ import {
     FaPhoneAlt,
     FaMapMarkerAlt,
 } from "react-icons/fa";
-import bgImage from "../assets/contactBg.png";
+// import bgImage from "../assets/homeBg.png";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
@@ -19,7 +19,8 @@ export default function Contact() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
+        setForm((prev) => ({ ...prev, [name]: value })); 
+
     };
 
     const handleSubmit = (e) => {
@@ -28,23 +29,23 @@ export default function Contact() {
     };
 
     return (
-        <div className="min-h-screen bg-black text-white">
-            <Header />
+        <div className="min-h-screen  ">
             {/* Hero */}
             <section
-                className="relative bg-cover bg-center bg-no-repeat py-16 px-6"
-                style={{ backgroundImage: `url(${bgImage})` }}
+                // className="relative bg-cover bg-center bg-no-repeat "
+                // style={{ backgroundImage: `url(${bgImage})` }}
             >
-                <div className="absolute inset-0 bg-gradient-to-r from-black via-red-900/80 to-black z-0" />
-                <div className="relative z-10 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-start">
+                <Header />
+                <div className="absolute inset-0  z-0" />
+                <div className="relative z-10 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-start py-16">
                     {/* Contact Info */}
                     <div>
-                        <h2 className="text-4xl font-bold mb-6">Contacts Us</h2>
-                        <p className="text-gray-300 mb-8 max-w-md">
+                        <h2 className="text-4xl font-bold mb-6 text-[#402813]">Contacts Us</h2>
+                        <p className="text-[#4B4642] mb-8 max-w-md">
                             We'd love to hear from you. Whether you have a question about your ticket,
                             need assistance, or just want to say hello — our team is ready to help!
                         </p>
-                        <div className="space-y-5 text-lg">
+                        <div className="space-y-5 text-lg text-[#4B4642]">
                             <p className="flex items-center gap-3">
                                 <FaEnvelope className="text-red-500" />
                                 <a href="mailto:support@shrilalmahal.com" className="hover:underline">
@@ -104,7 +105,7 @@ export default function Contact() {
                                 </div>
                                 <button
                                     type="submit"
-                                    className="w-full bg-black hover:bg-gray-800 text-white py-2 rounded-md font-semibold"
+                                    className="w-full bg-[#4A181B] hover:bg-gray-800 text-white py-2 rounded-md font-semibold"
                                 >
                                     Send Message
                                 </button>

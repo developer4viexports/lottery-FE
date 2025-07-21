@@ -242,7 +242,7 @@ function FileInputField({ name, placeholder, icon, onChange, error }) {
                 <input
                     type="file"
                     name={name}
-                    accept="image/*,video/*,.pdf"
+                    accept="image/*,video/*"
                     onChange={handleFileChange}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />

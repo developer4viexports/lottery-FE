@@ -87,8 +87,9 @@ export default function LandingForm() {
     };
 
     return (
-        <div className="py-12 px-4 min-h-screen flex items-center justify-center">
-            <div className="max-w-xl w-full bg-gradient-to-r from-orange-300 via-orange-200 to-orange-100 border border-gray-200 shadow-md rounded-xl p-6 sm:p-8">
+        <div className="   ">
+            <div className="max-w-xl w-full bg-gradient-to-br from-[#ffffffaa] to-[#4A181B] border border-gray-200 shadow-md rounded-xl p-6 sm:p-8">
+
                 <h2 className="text-2xl font-bold mb-6 text-black text-left">Lucky Ticket Form</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
@@ -209,7 +210,7 @@ export default function LandingForm() {
                             <FaTimes />
                         </button>
                         <TicketPreview data={ticket} />
-                    </div>
+                    </div> 
                 </div>
             )}
         </div>
@@ -267,7 +268,7 @@ function FileInputField({ name, placeholder, icon, onChange, error }) {
                 <input
                     type="file"
                     name={name}
-                    accept="image/*,video/*,.pdf"
+                    accept="image/*,video/*"
                     onChange={handleFileChange}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
