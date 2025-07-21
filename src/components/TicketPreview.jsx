@@ -22,8 +22,8 @@ export default function TicketPreview({ data }) {
                     .then(async () => {
                         hasUploaded.current = true;
                         // Optionally enable email sending:
-                        // const result = await sendTicketEmail(data.id);
-                        // console.log('📧 Email sent:', result.message);
+                        const result = await sendTicketEmail(data.id);
+                        console.log('📧 Email sent:', result.message);
                     })
                     .catch(err => console.error('❌ Upload failed:', err));
             });
