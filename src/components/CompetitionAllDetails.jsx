@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.lottery.tenderbaba.com';
 
 export default function CompetitionAllDetails() {
     const { id } = useParams(); // Get the competition ID from the URL
@@ -124,9 +124,9 @@ export default function CompetitionAllDetails() {
                 Issued: item.issueDate || '-',
                 Expiry: item.expiryDate || '-',
                 FollowProof: item.followProof ? BASE_URL + item.followProof : '',
-                PurchaseProof: item.purchaseProof ? BASE_URL + item.purchaseProof : '', 
+                PurchaseProof: item.purchaseProof ? BASE_URL + item.purchaseProof : '',
                 TicketImageURL: item.ticketImage ? BASE_URL + item.ticketImage : '',
-                
+
             } : {
                 TicketID: item.ticketID,
                 Name: item.name,
