@@ -21,7 +21,6 @@ export default function TicketPreview({ data }) {
                 uploadTicketImage(data.id, canvas)
                     .then(async () => {
                         hasUploaded.current = true;
-                        // Optionally enable email sending:
                         const result = await sendTicketEmail(data.id);
                         console.log('📧 Email sent:', result.message);
                     })
@@ -34,61 +33,89 @@ export default function TicketPreview({ data }) {
         <div className="mt-10 px-4 text-center">
             <div
                 ref={ref}
-                className="relative mx-auto max-w-sm shadow-xl font-sans text-gray-800 overflow-hidden"
+                className="max-w-md mx-auto border-4 border-blue-500 rounded-lg shadow-lg relative overflow-hidden text-left"
                 style={{
-                    borderRadius: '2rem',
                     backgroundImage: `url(${ticketBg})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
-                    padding: '24px',
                 }}
             >
-                {/* Side notches */}
-                <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-md z-10"></div>
-                <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-md z-10"></div>
+                {/* Decorative side circles */}
+                <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-8 h-8 bg-gray-600 rounded-full"></div>
+                <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1/2 w-8 h-8 bg-gray-600 rounded-full"></div>
 
-                <div className="relative z-20">
-                    <h2 className="text-center text-lg font-bold text-rose-700 bg-rose-100 inline-block px-4 py-1 rounded-full mb-3">
-                        Shrilalmahal Lucky Ticket
-                    </h2>
+                {/* Header */}
+                <div className="bg-pink-200 bg-opacity-80 text-center py-3 px-4">
+                    <h1 className="text-red-800 font-medium text-lg">Shrilalmahal Lucky Ticket</h1>
+                </div>
 
+                {/* Content */}
+                <div className="p-6 space-y-6 bg-opacity-90">
                     {data.isSuperTicket && (
-                        <div className="text-sm text-purple-700 bg-purple-100 px-3 py-1 rounded-full mb-4 inline-block font-medium">
+                        <div className="text-sm text-purple-700 bg-purple-100 px-3 py-1 rounded-full mb-2 inline-block font-medium text-center w-full">
                             💎 Super Ticket – 2X Reward!
                         </div>
                     )}
 
-                    <div className="grid grid-cols-2 gap-y-3 text-left text-sm mb-5">
-                        <div><strong>Name</strong><p>{data.name}</p></div>
-                        <div><strong>Email</strong><p>{data.email}</p></div>
-                        <div><strong>Instagram</strong><p>{data.instagram}</p></div>
-                        <div><strong>Ticket ID</strong><p>{data.ticketID}</p></div>
-                        <div><strong>Issued</strong><p>{data.issueDate}</p></div>
-                        <div><strong>Expires</strong><p>{data.expiryDate}</p></div>
+                    <div className="grid grid-cols-2 gap-y-4 gap-x-6">
+                        <div>
+                            <p className="text-gray-600 text-sm mb-1">Name</p>
+                            <p className="text-black font-medium">{data.name}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-600 text-sm mb-1">Email</p>
+                            <p className="text-black font-medium">{data.email}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-600 text-sm mb-1">Instagram</p>
+                            <p className="text-black font-medium">{data.instagram}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-600 text-sm mb-1">Ticket ID</p>
+                            <p className="text-black font-medium">{data.ticketID}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-600 text-sm mb-1">Issued</p>
+                            <p className="text-black font-medium">{data.issueDate}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-600 text-sm mb-1">Expires</p>
+                            <p className="text-black font-medium">{data.expiryDate}</p>
+                        </div>
                     </div>
 
-                    <hr className="border-dashed my-4 border-gray-300" />
-
-                    <div className="text-center mb-5">
-                        <p className="text-rose-700 font-semibold mb-2">Your Lucky Numbers:</p>
-                        <div className="flex justify-center gap-2 flex-wrap">
-                            {data.numbers.map((num, idx) => (
+                    <div className="text-center">
+                        <h2 className="text-red-800 font-medium text-lg mb-4">Your Lucky Numbers</h2>
+                        <div className="flex justify-center gap-2 mb-4 flex-wrap">
+                            {data.numbers.map((number, index) => (
                                 <div
-                                    key={idx}
-                                    className="w-12 h-12 rounded-md border border-rose-500 bg-white text-rose-700 flex items-center justify-center text-lg font-bold shadow-sm"
+                                    key={index}
+                                    className="w-10 h-10 border-2 border-red-800 flex items-center justify-center font-medium text-red-800 bg-white"
                                 >
-                                    {num}
+                                    {number}
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <div className="text-xs text-gray-800 mt-6 space-y-2 text-left">
-                        <p>📌 Make sure you’ve completed all tasks to claim your prize!</p>
-                        <p>📸 Follow <strong>@shrilalmahalgroup</strong> on Instagram</p>
-                        <p>📝 Comment your ticket number</p>
-                        <p>📤 Share ticket in story & tag 5 friends</p>
+                    <div className="text-center space-y-3 text-sm">
+                        <p className="text-gray-700">Make sure you've completed all tasks to claim your prize!</p>
+
+                        <div className="flex items-center justify-center gap-2 text-red-800">
+                            <span className="text-red-600">📷</span>
+                            <span>Follow @shrilalmahalgroup on Instagram</span>
+                        </div>
+
+                        <div className="flex items-center justify-center gap-2 text-red-800">
+                            <span className="text-red-600">💬</span>
+                            <span>Comment your ticket number</span>
+                        </div>
+
+                        <div className="flex items-center justify-center gap-2 text-red-800">
+                            <span className="text-red-600">📤</span>
+                            <span>Share ticket in story & tag 5 friends</span>
+                        </div>
                     </div>
                 </div>
             </div>

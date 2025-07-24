@@ -1,4 +1,4 @@
-const BASE_URL = 'https://api.lottery.tenderbaba.com/api';
+const BASE_URL = 'http://localhost:5000/api';
 
 export const submitTicket = async (formData) => {
     const res = await fetch(`${BASE_URL}/tickets/tickets`, {
@@ -104,3 +104,35 @@ export const getPrizeTiers = async () => {
     if (!res.ok) throw new Error(data.message || 'Failed to fetch prize tiers');
     return data.data;
 }
+
+// ✅ NEW: Submit contact form with optional file
+export const submitContactMessage = async (formData) => {
+    const res = await fetch(`${BASE_URL}/contact`, {
+        method: 'POST',
+        body: formData,
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+        const error = new Error(data.message || 'Failed to submit contact message');
+        error.response = data;
+        throw error;
+    }
+
+    return data;
+};
+
+
+// admin side api
+
+export const getContactMessages = async (token) => {
+    const res = await fetch(`${BASE_URL}/contact`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch messages');
+    return data.data;
+};

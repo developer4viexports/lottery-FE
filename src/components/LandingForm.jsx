@@ -88,7 +88,7 @@ export default function LandingForm() {
 
     return (
         <div className="   ">
-            <div className="max-w-xl w-full bg-gradient-to-br from-[#ffffffaa] to-[#4A181B] border border-gray-200 shadow-md rounded-xl p-6 sm:p-8">
+            <div className="max-w-xl w-full bg-gradient-to-br from-[#ffffffaa] to-[#84282D66] border border-gray-200 shadow-md rounded-xl p-6 sm:p-8">
 
                 <h2 className="text-2xl font-bold mb-6 text-black text-left">Lucky Ticket Form</h2>
 
@@ -195,7 +195,7 @@ export default function LandingForm() {
 
                     <button
                         type="submit"
-                        className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-2 rounded-md transition duration-200"
+                        className="w-full bg-[#84282D] hover:bg-gray-800 text-white font-semibold py-2 rounded-md transition duration-200"
                     >
                         Generate {form.isSuperTicket ? 'SuperTicket' : 'Ticket'}
                     </button>

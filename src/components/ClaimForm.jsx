@@ -81,7 +81,7 @@ export default function ClaimForm({ onSubmitted }) {
 
     return (
         <div className="py-10 px-4">
-            <div className="bg-gradient-to-br from-[#e8e1dc] to-[#c5bdb8] border border-gray-200 shadow-md rounded-xl p-6 sm:p-8">
+            <div className="bg-gradient-to-br from-[#e8e1dc] to-[#84282D] border border-gray-200 shadow-md rounded-xl p-6 sm:p-8">
                 <h2 className="text-2xl font-bold mb-6 text-black text-left">Claim Your Ticket</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
@@ -156,7 +156,7 @@ export default function ClaimForm({ onSubmitted }) {
 
                     <button
                         type="submit"
-                        className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-2 rounded-md transition duration-200"
+                        className="w-full bg-[#84282D] hover:bg-gray-800 text-white font-semibold py-2 rounded-md transition duration-200"
                     >
                         Submit Claim
                     </button>
