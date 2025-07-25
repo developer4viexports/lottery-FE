@@ -36,23 +36,94 @@ export default function TierPrizes() {
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23d4af37%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%224%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]"></div>
             </div>
 
-            <div className="container mx-auto px-4 py-20 relative z-10">
+            <div className="container mx-auto px-4 py-10 md:py-20 relative z-10">
                 <div className="max-w-6xl mx-auto text-center mb-16 animate-fade-in">
-                    <p className="text-sm uppercase tracking-wider text-[#6B4F3F] mb-4 flex items-center justify-center">
+                    {/* Title with stars always visible */}
+                    <p className="text-xs md:text-sm uppercase tracking-wider text-[#6B4F3F] mb-4 flex items-center justify-center">
                         <Star className="h-4 w-4 mr-2 text-[#D4AF37]" />
                         SHRI LAL MAHAL LUCKY TICKET
                         <Star className="h-4 w-4 ml-2 text-[#D4AF37]" />
                     </p>
-                    <h1 className="text-5xl font-bold text-[#2D1F1F] leading-tight mb-6">
-                        Your Dreams Are Just <span className="block bg-gradient-to-r from-[#A12828] to-[#F4C542] bg-clip-text text-transparent">One Ticket Away!</span>
+
+                    {/* Main Heading */}
+                    <h1 className="text-3xl md:text-5xl font-bold text-[#2D1F1F] leading-snug md:leading-tight mb-4 md:mb-6">
+                        Your Dreams Are Just{" "}
+                        <span className="inline md:block bg-gradient-to-r from-[#A12828] to-[#F4C542] bg-clip-text text-transparent">
+                            One Ticket Away!
+                        </span>
                     </h1>
-                    <p className="text-lg text-[#5F4C42] max-w-3xl mx-auto leading-relaxed">
+
+                    {/* Description */}
+                    <p className="text-base md:text-lg text-[#5F4C42] max-w-3xl mx-auto leading-normal md:leading-relaxed">
                         Join thousands of winners who have transformed their lives with our premium lottery experience. Every ticket is a chance to make your dreams come true.
                     </p>
                 </div>
 
-                {/* Prize Table */}
-                <div className="animate-slide-up mb-16">
+
+                {/* Mobile View: Cards */}
+                <div className="md:hidden animate-slide-up w-full max-w-md mx-auto">
+                    {/* Sticky Heading */}
+                    <div className="sticky top-0 z-10 bg-[#811818] text-white px-4 py-3 flex items-center gap-2 rounded-t-lg">
+                        <Trophy className="w-5 h-5" />
+                        <h2 className="text-base font-medium">Tier prizes</h2>
+                    </div>
+
+                    {/* Scrollable Content */}
+                    <div className=" ">
+                        {rows.map((row, idx) => {
+                            const isBonus = row.match.toLowerCase().includes("bonus");
+                            return (
+                                <div
+                                    key={idx}
+                                    className={`p-4 border shadow 
+    ${isBonus ? 'bg-[#FFFAE6] border-yellow-200' : 'bg-white border-gray-200'} 
+   
+    ${idx === rows.length - 1 ? 'rounded-b-lg' : ''}`}
+                                >
+
+                                    {/* Match Type */}
+                                    <div className="flex items-center gap-2 mb-2">
+                                        {isBonus ? (
+                                            <>
+                                                <Crown className="h-6 w-6 text-[#D4AF37]" />
+                                                <span className="text-[#A87C00] font-bold">Bonus Entry</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span className="w-8 h-8 bg-[#A12828] text-white flex items-center justify-center text-sm rounded">
+                                                    {row.match}
+                                                </span>
+                                                <span className="font-semibold text-gray-800">{row.match}</span>
+                                            </>
+                                        )}
+                                    </div>
+
+                                    {/* Regular Ticket Prize */}
+                                    {!isBonus && (
+                                        <div className="mb-2">
+                                            <p className="text-xs text-gray-500">Regular Ticket Prize</p>
+                                            <p className="text-sm text-green-800 font-semibold">{row.regular}</p>
+                                        </div>
+                                    )}
+
+                                    {/* Super Ticket Prize */}
+                                    <div>
+                                        <p className="text-xs text-gray-500">
+                                            Super Ticket Prize{!isBonus && ' (Better Rewards)'}
+                                        </p>
+                                        <p className={`text-sm font-medium ${isBonus ? 'text-yellow-700 italic' : 'text-green-800 italic'}`}>
+                                            {row.super}
+                                        </p>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+
+                {/* Web View: Table */}
+                <div className="hidden md:block animate-slide-up">
                     <div className="bg-white/80 backdrop-blur-sm border-2 border-[#E7CFA2] rounded-xl overflow-hidden shadow-2xl">
                         <div className="bg-[#811818] text-white py-5 px-6">
                             <h2 className="text-2xl flex items-center justify-center">
@@ -91,11 +162,10 @@ export default function TierPrizes() {
                                                                 </>
                                                             ) : (
                                                                 <>
-                                                                    <span className="w-8 h-8 bg-[#A12828] text-white flex items-center justify-center text-sm mr-3 px-8">
+                                                                    <span className="w-8 h-8 bg-[#A12828] text-white flex items-center justify-center text-sm mr-3">
                                                                         {row.match}
                                                                     </span>
-
-                                                                    {/* <span className="font-medium">{row.match}</span> */}
+                                                                    <span className="font-medium">{row.match}</span>
                                                                 </>
                                                             )}
                                                         </div>

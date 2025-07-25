@@ -23,7 +23,17 @@ export default function Footer() {
                     <h3 className="text-lg font-semibold mb-3">Navigation</h3>
                     <ul className="space-y-2 text-sm">
                         <li><a href="/activate" className="hover:text-orange-300 transition">Winners</a></li>
-                        <li><a href="/about" className="hover:text-orange-300 transition">About</a></li>
+                        <li>
+                            <a
+                                href="https://shrilalmahal.org/about-us"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hover:text-orange-300 transition"
+                            >
+                                About
+                            </a>
+                        </li>
+
                         <li><a href="/contact" className="hover:text-orange-300 transition">Contact</a></li>
                         <li><a href="/help" className="hover:text-orange-300 transition">Help</a></li>
                     </ul>

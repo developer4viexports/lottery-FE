@@ -4,6 +4,7 @@ import 'react-phone-input-2/lib/style.css';
 import TicketPreview from './TicketPreview';
 import { submitTicket } from '../api/api';
 import { FaUser, FaPhone, FaEnvelope, FaInstagram, FaUpload, FaCheckCircle, FaTimes } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 
 export default function LandingForm() {
     const [form, setForm] = useState({
@@ -78,10 +79,11 @@ export default function LandingForm() {
             setErrors({});
         } catch (err) {
             const resData = err?.response?.data;
+
             if (resData?.field && resData?.message) {
                 setErrors(prev => ({ ...prev, [resData.field]: resData.message }));
             } else {
-                alert(resData?.message || 'Something went wrong. Please try again.');
+                toast.error(resData?.message || 'Something went wrong. Please try again.');
             }
         }
     };
@@ -210,7 +212,7 @@ export default function LandingForm() {
                             <FaTimes />
                         </button>
                         <TicketPreview data={ticket} />
-                    </div> 
+                    </div>
                 </div>
             )}
         </div>
