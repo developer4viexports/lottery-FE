@@ -53,7 +53,16 @@ export default function Header() {
                     <nav className="flex flex-col gap-3 text-sm font-semibold text-[#84282D] text-[16px]">
                         <Link to="/home" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>Home</Link>
                         <Link to="/activate" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>Activate Your Ticket</Link>
-                        <Link to="/about" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>About Us</Link>
+                        <a
+                            href="https://shrilalmahal.org/about-us"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-red-400 transition-colors duration-200"
+                            onClick={() => setMenuOpen(false)}
+                        >
+                            About Us
+                        </a>
+
                         <Link to="/contact" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>Contact Us</Link>
                     </nav>
                 </div>
