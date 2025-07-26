@@ -9,6 +9,7 @@ import CompetitionDetails from './components/CompetitionDetails';
 import CompetitionAllDetails from './components/CompetitionAllDetails';
 import NotFound from './components/NotFound'; // Assuming you have a NotFound component
 import { Toaster } from 'react-hot-toast';
+import ClaimPage from './pages/ClaimPage'; // Importing the ClaimPage component
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/activate" element={<Winners />} />
+        <Route path="/claim" element={<ClaimPage />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/admin" element={<AdminDashboard />} />

@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function TicketDisplay({ winners }) {
     return (
-        <section className=" py-14 px-4 sm:px-6">
+        <section className=" py-14 px-4 sm:px-6 bg-[#FFF7ED]">
             <div className="max-w-3xl mx-auto flex flex-col items-center gap-10">
                 {winners.map((ticket, idx) => (
                     <div

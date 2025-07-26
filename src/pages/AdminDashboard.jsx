@@ -5,11 +5,13 @@ import {
 } from 'react-icons/fa';
 import AdminHeader from '../components/AdminHeader';
 import AdminTable from '../components/AdminTable';
-import ClaimTable from '../components/ClaimTable';
+import ActivateTable from '../components/ActivateTable';
 import DeclareTable from '../components/DeclareTable';
 import WinningCombination from '../components/WinningCombination';
 import AllCompetitions from '../components/AllCompetitions';
 import ContactTable from '../components/ContactTable';
+import ClaimTable from '../components/ClaimTable'; // ⬅️ Import at the top
+
 import { loginAdmin } from '../api/api';
 
 export default function AdminDashboard() {
@@ -94,7 +96,8 @@ export default function AdminDashboard() {
                         <h2 className="text-2xl font-bold text-blue-600 mb-6">Admin Panel</h2>
                         <nav className="flex flex-col gap-2 text-sm">
                             <SidebarButton icon={<FaTicketAlt />} label="All Tickets" tab="tickets" currentTab={tab} setTab={setTab} />
-                            <SidebarButton icon={<FaRegClipboard />} label="All Claims" tab="claims" currentTab={tab} setTab={setTab} />
+                            <SidebarButton icon={<FaRegClipboard />} label="All Activate Tickets" tab="Activate" currentTab={tab} setTab={setTab} />
+                            <SidebarButton icon={<FaRegClipboard />} label="Claim Tickets" tab="claims" currentTab={tab} setTab={setTab} />
                             <SidebarButton icon={<FaTrophy />} label="Declare" tab="winning" currentTab={tab} setTab={setTab} />
                             <SidebarButton icon={<FaRandom />} label="Winning Combo" tab="combination" currentTab={tab} setTab={setTab} />
                             <SidebarButton icon={<FaClipboardList />} label="Competitions" tab="all" currentTab={tab} setTab={setTab} />
@@ -113,6 +116,7 @@ export default function AdminDashboard() {
                 <div className="p-6">
                     <div className="bg-white shadow rounded p-6">
                         {tab === 'tickets' && <AdminTable token={token} />}
+                        {tab === 'Activate' && <ActivateTable token={token} />}
                         {tab === 'claims' && <ClaimTable token={token} />}
                         {tab === 'winning' && <DeclareTable token={token} />}
                         {tab === 'combination' && <WinningCombination token={token} />}

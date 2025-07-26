@@ -2,6 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { getPrizeTiers } from '../api/api';
 import { Star, Trophy, Crown } from 'lucide-react';
 
+const matchTypeLabels = {
+    "7/7": { label: "Grand", bg: "bg-yellow-100", text: "text-yellow-700" },
+    "6/7": { label: "Silver", bg: "bg-gray-100", text: "text-gray-700" },
+    "5/7": { label: "Bronze", bg: "bg-orange-100", text: "text-orange-700" },
+    "4/7": { label: "Consolation", bg: "bg-stone-200", text: "text-stone-700" },
+};
+
 export default function TierPrizes() {
     const [rows, setRows] = useState([]);
 
@@ -38,14 +45,12 @@ export default function TierPrizes() {
 
             <div className="container mx-auto px-4 py-10 md:py-20 relative z-10">
                 <div className="max-w-6xl mx-auto text-center mb-16 animate-fade-in">
-                    {/* Title with stars always visible */}
                     <p className="text-xs md:text-sm uppercase tracking-wider text-[#6B4F3F] mb-4 flex items-center justify-center">
                         <Star className="h-4 w-4 mr-2 text-[#D4AF37]" />
                         SHRI LAL MAHAL LUCKY TICKET
                         <Star className="h-4 w-4 ml-2 text-[#D4AF37]" />
                     </p>
 
-                    {/* Main Heading */}
                     <h1 className="text-3xl md:text-5xl font-bold text-[#2D1F1F] leading-snug md:leading-tight mb-4 md:mb-6">
                         Your Dreams Are Just{" "}
                         <span className="inline md:block bg-gradient-to-r from-[#A12828] to-[#F4C542] bg-clip-text text-transparent">
@@ -53,34 +58,28 @@ export default function TierPrizes() {
                         </span>
                     </h1>
 
-                    {/* Description */}
                     <p className="text-base md:text-lg text-[#5F4C42] max-w-3xl mx-auto leading-normal md:leading-relaxed">
                         Join thousands of winners who have transformed their lives with our premium lottery experience. Every ticket is a chance to make your dreams come true.
                     </p>
                 </div>
 
-
-                {/* Mobile View: Cards */}
+                {/* Mobile View */}
                 <div className="md:hidden animate-slide-up w-full max-w-md mx-auto">
-                    {/* Sticky Heading */}
                     <div className="sticky top-0 z-10 bg-[#811818] text-white px-4 py-3 flex items-center gap-2 rounded-t-lg">
                         <Trophy className="w-5 h-5" />
                         <h2 className="text-base font-medium">Tier prizes</h2>
                     </div>
 
-                    {/* Scrollable Content */}
-                    <div className=" ">
+                    <div>
                         {rows.map((row, idx) => {
                             const isBonus = row.match.toLowerCase().includes("bonus");
                             return (
                                 <div
                                     key={idx}
                                     className={`p-4 border shadow 
-    ${isBonus ? 'bg-[#FFFAE6] border-yellow-200' : 'bg-white border-gray-200'} 
-   
-    ${idx === rows.length - 1 ? 'rounded-b-lg' : ''}`}
+                                        ${isBonus ? 'bg-[#FFFAE6] border-yellow-200' : 'bg-white border-gray-200'} 
+                                        ${idx === rows.length - 1 ? 'rounded-b-lg' : ''}`}
                                 >
-
                                     {/* Match Type */}
                                     <div className="flex items-center gap-2 mb-2">
                                         {isBonus ? (
@@ -93,12 +92,18 @@ export default function TierPrizes() {
                                                 <span className="w-8 h-8 bg-[#A12828] text-white flex items-center justify-center text-sm rounded">
                                                     {row.match}
                                                 </span>
-                                                <span className="font-semibold text-gray-800">{row.match}</span>
+                                                <div className="flex items-center gap-2">
+                                                    {/* <span className="font-semibold text-gray-800">{row.match}</span> */}
+                                                    {matchTypeLabels[row.match] && (
+                                                        <span className={`text-xs font-medium px-2 py-0.5 rounded ${matchTypeLabels[row.match].bg} ${matchTypeLabels[row.match].text}`}>
+                                                            {matchTypeLabels[row.match].label}
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </>
                                         )}
                                     </div>
 
-                                    {/* Regular Ticket Prize */}
                                     {!isBonus && (
                                         <div className="mb-2">
                                             <p className="text-xs text-gray-500">Regular Ticket Prize</p>
@@ -106,7 +111,6 @@ export default function TierPrizes() {
                                         </div>
                                     )}
 
-                                    {/* Super Ticket Prize */}
                                     <div>
                                         <p className="text-xs text-gray-500">
                                             Super Ticket Prize{!isBonus && ' (Better Rewards)'}
@@ -121,8 +125,7 @@ export default function TierPrizes() {
                     </div>
                 </div>
 
-
-                {/* Web View: Table */}
+                {/* Desktop View */}
                 <div className="hidden md:block animate-slide-up">
                     <div className="bg-white/80 backdrop-blur-sm border-2 border-[#E7CFA2] rounded-xl overflow-hidden shadow-2xl">
                         <div className="bg-[#811818] text-white py-5 px-6">
@@ -165,7 +168,14 @@ export default function TierPrizes() {
                                                                     <span className="w-8 h-8 bg-[#A12828] text-white flex items-center justify-center text-sm mr-3">
                                                                         {row.match}
                                                                     </span>
-                                                                    <span className="font-medium">{row.match}</span>
+                                                                    <div className="flex items-center gap-2">
+                                                                        {/* <span className="font-medium">{row.match}</span> */}
+                                                                        {matchTypeLabels[row.match] && (
+                                                                            <span className={`text-xs font-medium px-2 py-0.5 rounded ${matchTypeLabels[row.match].bg} ${matchTypeLabels[row.match].text}`}>
+                                                                                {matchTypeLabels[row.match].label}
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
                                                                 </>
                                                             )}
                                                         </div>

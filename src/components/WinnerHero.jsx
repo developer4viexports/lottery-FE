@@ -4,7 +4,7 @@ import React from 'react';
 export default function WinnerHero() {
     return (
         <section
-            className="relative bg-cover bg-center text-[#402813] py-20 px-4 text-center"
+            className="relative bg-cover bg-center text-[#402813] py-20 px-4 text-center bg-[#FFF7ED]"
             // style={{ backgroundImage: `url(${bgImage})` }}
         >
             {/* Content */}

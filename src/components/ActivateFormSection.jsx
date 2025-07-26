@@ -1,9 +1,9 @@
 import React from 'react';
-import ClaimForm from './ClaimForm';
+import ActivateForm from './ActivateForm';
 
-export default function ClaimFormSection() {
+export default function ActivateFormSection() {
     return (
-        <section className="relative w-full bg-[#FFF7E8] py-12 md:py-20 overflow-hidden">
+        <section className="relative w-full bg-[#FFFFFF] py-12 md:py-20 overflow-hidden">
 
             {/* Diagonal Top Slice - Made more subtle */}
             <div
@@ -16,7 +16,7 @@ export default function ClaimFormSection() {
 
                 {/* Left Side Content */}
                 <div className="text-black">
-                    <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-[#402813]">Claim Your Ticket</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-[#402813]">Activate Your Ticket</h2>
                     <p className="text-[#4B4642] text-sm leading-relaxed">
                         Congratulations! If your ticket number appears below, submit the form
                         so we can manually verify your entry.
@@ -25,7 +25,7 @@ export default function ClaimFormSection() {
 
                 {/* Right Side Form - no wrapper styling */}
                 <div className="w-full max-w-md ml-auto">
-                    <ClaimForm onSubmitted={() => { }} />
+                    <ActivateForm onSubmitted={() => { }} />
                 </div>
             </div>
         </section>

@@ -104,7 +104,7 @@ export default function AdminTable({ token }) {
             Issued: t.issueDate || '-',
             Expiry: t.expiryDate || '-',
             CreatedAt: formatDateTime(t.createdAt),
-            ProofImageURL: t.proofImage ? FILE_BASE_URL + t.proofImage : '',
+            // ProofImageURL: t.proofImage ? FILE_BASE_URL + t.proofImage : '',
             PurchaseProofURL: t.purchaseProof ? FILE_BASE_URL + t.purchaseProof : '',
             TicketImageURL: t.ticketImage ? FILE_BASE_URL + t.ticketImage : ''
         }));
@@ -209,7 +209,7 @@ export default function AdminTable({ token }) {
                         <tr>
                             {[
                                 "S. No", "Name", "Email", "Phone", "Ticket ID", "Numbers",
-                                "Super", "Prize", "Issued", "Expiry", "Proof", "Follow Proof",
+                                "Super", "Prize", "Issued", "Expiry", "Follow Proof",
                                 "Purchase Proof", "Ticket Image", "Created At"
                             ].map((header, idx) => (
                                 <th key={idx} className="p-2 border">{header}</th>
@@ -231,7 +231,7 @@ export default function AdminTable({ token }) {
                                 <td className="p-2 border">{t.expiryDate}</td>
 
                                 {/* Proof files */}
-                                {['proofImage', 'followProof', 'purchaseProof'].map((key, j) => (
+                                {['followProof', 'purchaseProof'].map((key, j) => (
                                     <td key={j} className="p-2 border">
                                         {t[key] ? (
                                             <button

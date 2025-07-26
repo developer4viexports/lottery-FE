@@ -18,8 +18,8 @@ export const submitTicket = async (formData) => {
     return data;
 };
 
-export const submitClaim = async (formData) => {
-    const res = await fetch(`${BASE_URL}/tickets/claims`, {
+export const submitActivate = async (formData) => {
+    const res = await fetch(`${BASE_URL}/tickets/activate`, {
         method: 'POST',
         body: formData, // no headers needed!
     });
@@ -27,13 +27,31 @@ export const submitClaim = async (formData) => {
     const data = await res.json();
 
     if (!res.ok) {
-        const error = new Error(data.message || 'Claim submission failed');
+        const error = new Error(data.message || 'Activation submission failed');
         error.response = data;
         throw error;
     }
 
     return data;
 };
+
+export const submitClaim = async (formData) => {
+    const res = await fetch(`${BASE_URL}/tickets/claim`, {
+        method: 'POST',
+        body: formData,
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+        const error = new Error(data.message || 'Failed to submit claim');
+        error.response = data;
+        throw error;
+    }
+
+    return data;
+};
+
 
 export const uploadTicketImage = async (ticketId, canvas) => {
     return new Promise((resolve, reject) => {

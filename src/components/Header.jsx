@@ -32,8 +32,9 @@ export default function Header() {
 
                 {/* Desktop Nav */}
                 <nav className="hidden md:flex gap-6 lg:gap-16 text-sm font-semibold text-[#84282D] text-[16px]">
-                    <Link to="/home" className="hover:text-red-400 transition-colors duration-200">Home</Link>
+                    <Link to="/home" className="hover:text-red-400 transition-colors duration-200">Generate Your Ticket</Link>
                     <Link to="/activate" className="hover:text-red-400 transition-colors duration-200">Activate Your Ticket</Link>
+                    <Link to="/claim" className="hover:text-red-400 transition-colors duration-200">Claim Your Ticket</Link>
                     <a
                         href="https://shrilalmahal.org/about-us"
                         target="_blank"
@@ -42,7 +43,6 @@ export default function Header() {
                     >
                         About Us
                     </a>
-
                     <Link to="/contact" className="hover:text-red-400 transition-colors duration-200">Contact Us</Link>
                 </nav>
             </div>
@@ -51,8 +51,9 @@ export default function Header() {
             {menuOpen && (
                 <div className="md:hidden px-4 pb-4">
                     <nav className="flex flex-col gap-3 text-sm font-semibold text-[#84282D] text-[16px]">
-                        <Link to="/home" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>Home</Link>
+                        <Link to="/home" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>Generate Your Ticket</Link>
                         <Link to="/activate" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>Activate Your Ticket</Link>
+                        <Link to="/claim" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>Claim Your Ticket</Link>
                         <a
                             href="https://shrilalmahal.org/about-us"
                             target="_blank"
@@ -62,7 +63,6 @@ export default function Header() {
                         >
                             About Us
                         </a>
-
                         <Link to="/contact" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>Contact Us</Link>
                     </nav>
                 </div>

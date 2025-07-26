@@ -30,12 +30,15 @@ export default function LandingForm() {
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'Invalid email format';
         if (!/^@[\w.]+$/.test(form.instagram)) errs.instagram = 'Instagram must start with @ and use only letters, numbers, dot or underscore';
         if (!form.followProof) errs.followProof = 'Follow proof is required';
-        if (form.file) {
-            const type = form.file.type;
-            if (!(type.startsWith('image/') || type.startsWith('video/'))) {
-                errs.file = 'Only image or video files are allowed.';
-            }
+        if (form.isSuperTicket && !form.purchaseProof) {
+            errs.purchaseProof = 'Purchase proof is required for SuperTicket';
         }
+        // if (form.file) {
+        //     const type = form.file.type;
+        //     if (!(type.startsWith('image/') || type.startsWith('video/'))) {
+        //         errs.file = 'Only image or video files are allowed.';
+        //     }
+        // }
         setErrors(errs);
         return Object.keys(errs).length === 0;
     };
@@ -64,7 +67,7 @@ export default function LandingForm() {
         formData.append('isSuperTicket', form.isSuperTicket ? '1' : '0');
         formData.append('issueDate', issueDate);
         formData.append('expiryDate', expiryDate);
-        if (form.file) formData.append('file', form.file);
+        // if (form.file) formData.append('file', form.file);
         if (form.followProof) formData.append('followProof', form.followProof);
         if (form.isSuperTicket && form.purchaseProof) {
             formData.append('purchaseProof', form.purchaseProof);
@@ -155,13 +158,13 @@ export default function LandingForm() {
                     </div>
 
 
-                    <FileInputField
+                    {/* <FileInputField
                         name="file"
                         placeholder="Task Proof"
                         icon={<FaUpload />}
                         onChange={handleChange}
                         error={errors.file}
-                    />
+                    /> */}
 
                     <FileInputField
                         name="followProof"

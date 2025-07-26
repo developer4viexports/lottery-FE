@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import { submitClaim } from '../api/api';
+import { submitActivate } from '../api/api';
 import {
     FaTicketAlt, FaUser, FaEnvelope, FaPhone,
     FaInstagram, FaCheckCircle, FaUpload
 } from 'react-icons/fa';
 
-export default function ClaimForm({ onSubmitted }) {
+export default function ActivateForm({ onSubmitted }) {
     const [form, setForm] = useState({
         ticketID: '',
         name: '',
@@ -30,7 +30,7 @@ export default function ClaimForm({ onSubmitted }) {
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = "Invalid email";
         if (cleanedPhone.length < 10 || cleanedPhone.length > 15) errs.phone = "Phone must include country code and be valid";
         if (!/^@[\w.]+$/.test(form.instagram)) errs.instagram = "Instagram must start with @ and use only letters, numbers, dot or underscore";
-        if (!form.ticketImage) errs.ticketImage = "Ticket image is required";
+        // if (!form.ticketImage) errs.ticketImage = "Ticket image is required";
         if (!form.proofImage) errs.proofImage = "Proof of task is required";
 
         setErrors(errs);
@@ -57,7 +57,7 @@ export default function ClaimForm({ onSubmitted }) {
         });
 
         try {
-            await submitClaim(formData);
+            await submitActivate(formData);
             setSubmitted(true);
             onSubmitted?.();
         } catch (error) {
@@ -82,7 +82,7 @@ export default function ClaimForm({ onSubmitted }) {
     return (
         <div className="py-10 px-4">
             <div className="bg-gradient-to-br from-[#e8e1dc] to-[#84282D] border border-gray-200 shadow-md rounded-xl p-6 sm:p-8">
-                <h2 className="text-2xl font-bold mb-6 text-black text-left">Claim Your Ticket</h2>
+                <h2 className="text-2xl font-bold mb-6 text-black text-left">Activate Your Ticket</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <InputField
@@ -90,7 +90,7 @@ export default function ClaimForm({ onSubmitted }) {
                         value={form.ticketID}
                         error={errors.ticketID}
                         onChange={handleChange}
-                        placeholder="Winning Ticket ID"
+                        placeholder="Ticket ID"
                         icon={<FaTicketAlt />}
                     />
                     <InputField
@@ -139,13 +139,13 @@ export default function ClaimForm({ onSubmitted }) {
                     </div>
 
 
-                    <FileInputField
+                    {/* <FileInputField
                         name="ticketImage"
                         placeholder="Upload Ticket Screenshot"
                         icon={<FaUpload />}
                         onChange={handleChange}
                         error={errors.ticketImage}
-                    />
+                    /> */}
                     <FileInputField
                         name="proofImage"
                         placeholder="Upload Proof of Task"
@@ -158,7 +158,7 @@ export default function ClaimForm({ onSubmitted }) {
                         type="submit"
                         className="w-full bg-[#84282D] hover:bg-gray-800 text-white font-semibold py-2 rounded-md transition duration-200"
                     >
-                        Submit Claim
+                        Submit
                     </button>
                 </form>
 
