@@ -5,6 +5,7 @@ import HeroSection from '../components/HeroSection';
 import TierPrizes from '../components/TierPrizes';
 import Footer from '../components/Footer';
 import FocusSection from '../components/FocusSection';
+import TicketInstructions from '../components/TicketInstructions';
 
 export default function Home() {
     return (
@@ -16,6 +17,7 @@ export default function Home() {
             <Header />
             <TierPrizes />
             {/* </div> */}
+            <TicketInstructions />
             <HeroSection />
             <FocusSection />
             {/* <TicketPreview data={ticketData} /> */}

@@ -97,7 +97,7 @@ export default function AdminDashboard() {
                         <nav className="flex flex-col gap-2 text-sm">
                             <SidebarButton icon={<FaTicketAlt />} label="All Tickets" tab="tickets" currentTab={tab} setTab={setTab} />
                             <SidebarButton icon={<FaRegClipboard />} label="All Activate Tickets" tab="Activate" currentTab={tab} setTab={setTab} />
-                            <SidebarButton icon={<FaRegClipboard />} label="Claim Tickets" tab="claims" currentTab={tab} setTab={setTab} />
+                            <SidebarButton icon={<FaRegClipboard />} label="All Claim Tickets" tab="claims" currentTab={tab} setTab={setTab} />
                             <SidebarButton icon={<FaTrophy />} label="Declare" tab="winning" currentTab={tab} setTab={setTab} />
                             <SidebarButton icon={<FaRandom />} label="Winning Combo" tab="combination" currentTab={tab} setTab={setTab} />
                             <SidebarButton icon={<FaClipboardList />} label="Competitions" tab="all" currentTab={tab} setTab={setTab} />

@@ -77,7 +77,7 @@ export default function ClaimTicketForm() {
 
 
     return (
-        <div className="max-w-xl w-full bg-white border shadow-md rounded-xl p-6 sm:p-8 mx-auto">
+        <div className="max-w-xl w-full bg-gradient-to-br from-[#ffffffaa] to-[#84282D66] border border-gray-200 shadow-md rounded-xl p-6 sm:p-8 mx-auto">
             <h2 className="text-2xl font-bold mb-6 text-black text-left">Claim Your Winning Ticket</h2>
             <form onSubmit={handleSubmit} className="space-y-5">
 

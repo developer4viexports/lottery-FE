@@ -8,7 +8,7 @@ export default function ContactTable({ token }) {
     const [selectedMessage, setSelectedMessage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
 
-    const FILE_BASE_URL = 'https://api.lottery.tenderbaba.com';
+    const FILE_BASE_URL = 'http://localhost:5000';
 
     useEffect(() => {
         getContactMessages(token)

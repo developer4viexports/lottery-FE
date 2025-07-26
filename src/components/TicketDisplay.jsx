@@ -2,24 +2,68 @@ import React from 'react';
 
 export default function TicketDisplay({ winners }) {
     return (
-        <section className=" py-14 px-4 sm:px-6 bg-[#FFF7ED]">
-            <div className="max-w-3xl mx-auto flex flex-col items-center gap-10">
+        <section className="py-14 px-4 sm:px-6 bg-[#FFF7ED]">
+            <div className="max-w-3xl mx-auto flex flex-col items-center gap-8">
                 {winners.map((ticket, idx) => (
-                    <div
-                        key={ticket._id || idx}
-                        className="relative bg-[#EDEDED] rounded-md shadow-lg w-full mx-auto max-w-md text-center"
-                    >
-                        {/* Left and right half-circle cuts */}
-                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#1a0b0c] rounded-full z-10" />
-                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#1a0b0c] rounded-full z-10" />
+                    <div key={ticket._id || idx} className="relative w-full max-w-[400px] h-[90px]">
+                        {/* Main ticket body */}
+                        <div
+                            className="relative flex items-center justify-between overflow-hidden w-full h-full rounded-lg"
+                            style={{
+                                backgroundColor: '#84282D',
+                            }}
+                        >
+                            {/* Left notch */}
+                            <div
+                                className="absolute -left-3 top-1/2 transform -translate-y-1/2 bg-[#FFF7ED] rounded-full"
+                                style={{
+                                    width: '24px',
+                                    height: '24px',
+                                }}
+                            />
 
-                        {/* Dashed cut in center */}
-                        <div className="absolute left-1/2 top-0 -translate-x-1/2 h-full border-l-[6px] border-dotted border-[#1a0b0c] z-0 opacity-70" />
+                            {/* Right notch */}
+                            <div
+                                className="absolute -right-3 top-1/2 transform -translate-y-1/2 bg-[#FFF7ED] rounded-full"
+                                style={{
+                                    width: '24px',
+                                    height: '24px',
+                                }}
+                            />
 
-                        {/* Ticket content */}
-                        <div className="relative z-10 px-8 py-6">
-                            <p className="text-xl font-bold tracking-wide text-[#2b2b2b]">{ticket.ticketID}</p>
-                            {/* <p className="text-sm text-gray-600 mt-1 capitalize">{ticket.name || 'Anonymous'}</p> */}
+                            {/* Dashed perforation line */}
+                            <div
+                                className="absolute top-0 bottom-0 border-l-[2.5px] border-dashed border-white"
+                                style={{
+                                    left: '40px',
+                                }}
+                            />
+
+                            {/* Ticket content */}
+                            <div className="flex-1 flex items-center justify-center px-4 sm:px-6">
+                                <div className="text-center w-full">
+                                    <div
+                                        className="text-white font-bold break-words"
+                                        style={{
+                                            fontSize: '16px',
+                                            fontFamily: 'Inter, sans-serif',
+                                        }}
+                                    >
+                                        {ticket.ticketID}
+                                    </div>
+                                    <div
+                                        className="text-white capitalize"
+                                        style={{
+                                            fontSize: '12px',
+                                            fontFamily: 'Inter, sans-serif',
+                                            opacity: 0.8,
+                                            marginTop: '2px',
+                                        }}
+                                    >
+                                        {/* {ticket.name || 'Anonymous'} */}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 ))}

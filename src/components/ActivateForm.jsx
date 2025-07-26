@@ -148,7 +148,7 @@ export default function ActivateForm({ onSubmitted }) {
                     /> */}
                     <FileInputField
                         name="proofImage"
-                        placeholder="Upload Proof of Task"
+                        placeholder="Upload Task Proof"
                         icon={<FaUpload />}
                         onChange={handleChange}
                         error={errors.proofImage}

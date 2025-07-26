@@ -209,12 +209,17 @@ export default function LandingForm() {
 
             {/* Modal Preview */}
             {showModal && (
-                <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center px-4">
-                    <div className="relative bg-white rounded-xl max-w-lg w-full shadow-lg overflow-hidden p-4">
-                        <button onClick={() => setShowModal(false)} className="absolute top-2 right-2 text-gray-600 hover:text-red-500">
+                <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+                    <div className="relative w-full max-w-md">
+                        <button
+                            onClick={() => setShowModal(false)}
+                            className="absolute -top-10 right-0 text-white hover:text-red-300 z-10 text-2xl"
+                        >
                             <FaTimes />
                         </button>
-                        <TicketPreview data={ticket} />
+                        <div className="bg-white rounded-xl overflow-hidden shadow-2xl">
+                            <TicketPreview data={ticket} />
+                        </div>
                     </div>
                 </div>
             )}
