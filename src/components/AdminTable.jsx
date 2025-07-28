@@ -10,7 +10,7 @@ export default function AdminTable({ token }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [previewUrl, setPreviewUrl] = useState(null);
 
-    const FILE_BASE_URL = 'http://localhost:5000';
+    const FILE_BASE_URL = 'https://api.lottery.tenderbaba.com';
 
     useEffect(() => {
         const fetchTickets = async () => {
