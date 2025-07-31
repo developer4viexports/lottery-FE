@@ -199,8 +199,8 @@ export default function ActivateAdminTable({ token }) {
                     <thead className="bg-gray-100 text-left">
                         <tr>
                             {[
-                                'S. No', 'Ticket ID', 'Name', 'Email', 'Phone',
-                                'Instagram', 'Proof', 'Submitted At'
+                                'S. No', 'Ticket ID', 'Email', 'Phone', 'Story Proof',
+                                'Comment Proof', 'Submitted At'
                             ].map((h, i) => (
                                 <th key={i} className="p-2 border">{h}</th>
                             ))}
@@ -211,12 +211,12 @@ export default function ActivateAdminTable({ token }) {
                             <tr key={i} className="hover:bg-gray-50">
                                 <td className="p-2 border">{i + 1}</td>
                                 <td className="p-2 border">{c.ticketID}</td>
-                                <td className="p-2 border">{c.name}</td>
+                                {/* <td className="p-2 border">{c.name}</td> */}
                                 <td className="p-2 border">{c.email}</td>
                                 <td className="p-2 border">{c.phone}</td>
                                 {/* <td className="p-2 border">{c.countryCode || '-'}</td> */}
-                                <td className="p-2 border">{c.instagram}</td>
-                                {/* <td className="p-2 border">
+                                {/* <td className="p-2 border">{c.instagram}</td> */}
+                                <td className="p-2 border">
                                     {c.ticketImage ? (
                                         <button
                                             onClick={() => setPreviewUrl(FILE_BASE_URL + c.ticketImage)}
@@ -227,7 +227,7 @@ export default function ActivateAdminTable({ token }) {
                                     ) : (
                                         <span className="text-gray-400 italic">No file</span>
                                     )}
-                                </td> */}
+                                </td>
                                 <td className="p-2 border">
                                     {c.proofImage ? (
                                         <button

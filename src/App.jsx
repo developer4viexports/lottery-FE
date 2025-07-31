@@ -18,7 +18,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/activate" element={<Winners />} />
+        <Route path="/winners" element={<Winners />} />
         <Route path="/claim" element={<ClaimPage />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />

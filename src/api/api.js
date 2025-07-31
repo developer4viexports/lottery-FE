@@ -141,6 +141,31 @@ export const submitContactMessage = async (formData) => {
     return data;
 };
 
+// Instagram post URL and expiry date 
+export const getInstagramPostUrl = async () => {
+    const res = await fetch(`${BASE_URL}/url-date`);
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Failed to fetch Instagram URL');
+    }
+
+    const { url, collectedAt } = data.data;
+    return { url, collectedAt };
+};
+
+// ✅ Fetch ticket details by Ticket ID
+export const getTicketDetails = async (ticketID) => {
+    const res = await fetch(`${BASE_URL}/tickets/${ticketID}`);
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Failed to fetch ticket details');
+    }
+
+    return data.data; // contains name, instagram, ticketID
+};
+
 
 // admin side api
 
@@ -154,3 +179,5 @@ export const getContactMessages = async (token) => {
     if (!res.ok) throw new Error(data.message || 'Failed to fetch messages');
     return data.data;
 };
+
+

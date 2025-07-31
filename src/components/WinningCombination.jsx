@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import AdminUrlDateEditor from './AdminUrlDateEditor';
 
 function generateTicketNumbers() {
     const nums = new Set();
@@ -288,6 +289,7 @@ export default function WinningCombination({ token }) {
                     </form>
                 </div>
             </div>
+            <AdminUrlDateEditor token={token} />
 
             <div className="bg-white p-6 rounded shadow-md">
                 <h2 className="text-xl font-semibold mb-4">🎉 Current Winners</h2>

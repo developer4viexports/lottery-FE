@@ -5,23 +5,35 @@ import HeroSection from '../components/HeroSection';
 import TierPrizes from '../components/TierPrizes';
 import Footer from '../components/Footer';
 import FocusSection from '../components/FocusSection';
-import TicketInstructions from '../components/TicketInstructions';
+import ActivateFormSection from '../components/ActivateFormSection';
+import ClaimTicketSection from '../components/ClaimTicketSection';
+import HowYourTicketWorks from '../components/HowYourTicketWorks';
+import HowItWorks from '../components/HowItWorks';
 
 export default function Home() {
     return (
         <>
-            {/* <div
-            className=" w-full bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${background})` }}
-        > */}
+
             <Header />
             <TierPrizes />
-            {/* </div> */}
-            <TicketInstructions />
-            <HeroSection />
+            <HowItWorks />
+            <HowYourTicketWorks />
+
+            {/* Add ID to Hero Section */}
+            <div id="generate-ticket">
+                <HeroSection />
+            </div>
+
+            {/* Add ID to Activate Section */}
+            <div id="activate-ticket">
+                <ActivateFormSection />
+            </div>
+
+            {/* Add ID to Claim Section */}
+            <div id="claim-ticket">
+                <ClaimTicketSection />
+            </div>
             <FocusSection />
-            {/* <TicketPreview data={ticketData} /> */}
-            {/* <LandingForm /> */}
             <Footer />
         </>
     );

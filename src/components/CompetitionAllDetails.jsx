@@ -236,11 +236,12 @@ export default function CompetitionAllDetails() {
                                 <tr>
                                     <th className="p-2 border">S. No</th>
                                     <th className="p-2 border">Ticket ID</th>
-                                    <th className="p-2 border">Name</th>
+                                    {/* <th className="p-2 border">Name</th> */}
                                     <th className="p-2 border">Email</th>
                                     <th className="p-2 border">Phone</th>
-                                    <th className="p-2 border">Instagram</th>
-                                    <th className="p-2 border">Proof File</th>
+                                    {/* <th className="p-2 border">Instagram</th> */}
+                                    <th className="p-2 border">Story Proof</th>
+                                    <th className="p-2 border">Comment Proof</th>
                                     <th className="p-2 border">Submitted At</th>
                                 </tr>
                             </thead>
@@ -249,10 +250,11 @@ export default function CompetitionAllDetails() {
                                     <tr key={i} className="hover:bg-gray-50">
                                         <td className="p-2 border">{i + 1}</td>
                                         <td className="p-2 border">{item.ticketID}</td>
-                                        <td className="p-2 border">{item.name}</td>
+                                        {/* <td className="p-2 border">{item.name}</td> */}
                                         <td className="p-2 border">{item.email}</td>
                                         <td className="p-2 border">{item.phone}</td>
-                                        <td className="p-2 border">{item.instagram}</td>
+                                        {/* <td className="p-2 border">{item.instagram}</td> */}
+                                        <td className="p-2 border">{item.proofImage ? <button onClick={() => setPreviewUrl(BASE_URL + item.ticketImage)} className="text-blue-600 underline hover:text-blue-800">View</button> : <span className="text-gray-400 italic">No file</span>}</td>
                                         <td className="p-2 border">{item.proofImage ? <button onClick={() => setPreviewUrl(BASE_URL + item.proofImage)} className="text-blue-600 underline hover:text-blue-800">View</button> : <span className="text-gray-400 italic">No file</span>}</td>
                                         <td className="p-2 border">{formatDateTime(item.createdAt)}</td>
                                     </tr>
@@ -272,6 +274,7 @@ export default function CompetitionAllDetails() {
                                     <th className="p-2 border">Phone</th>
                                     <th className="p-2 border">Instagram</th>
                                     <th className="p-2 border">Numbers</th>
+                                    <th className="p-2 border">Address</th>
                                     <th className="p-2 border">Submitted At</th>
                                 </tr>
                             </thead>
@@ -285,6 +288,7 @@ export default function CompetitionAllDetails() {
                                         <td className="p-2 border">{item.phone}</td>
                                         <td className="p-2 border">{item.instagram}</td>
                                         <td className="p-2 border">{item.numbers?.join(' ')}</td>
+                                        <td className="p-2 border">{item.address}</td>
                                         <td className="p-2 border">{formatDateTime(item.createdAt)}</td>
                                     </tr>
                                 ))}

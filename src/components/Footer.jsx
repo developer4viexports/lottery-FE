@@ -22,7 +22,7 @@ export default function Footer() {
                 <div>
                     <h3 className="text-lg font-semibold mb-3">Navigation</h3>
                     <ul className="space-y-2 text-sm">
-                        <li><a href="/activate" className="hover:text-orange-300 transition">Winners</a></li>
+                        <li><a href="/winners" className="hover:text-orange-300 transition">Winners</a></li>
                         <li>
                             <a
                                 href="https://shrilalmahal.org/about-us"

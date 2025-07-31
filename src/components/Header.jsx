@@ -10,12 +10,15 @@ export default function Header() {
             <div className="mx-auto px-4 sm:px-6 lg:px-20 py-2 flex items-center justify-between">
                 {/* Logo */}
                 <div className="flex items-center">
-                    <img
-                        src={logo}
-                        alt="Shrilalmahal Logo"
-                        className="h-12 w-auto object-contain"
-                    />
+                    <a href="/home">
+                        <img
+                            src={logo}
+                            alt="Shrilalmahal Logo"
+                            className="h-12 w-auto object-contain"
+                        />
+                    </a>
                 </div>
+
 
                 {/* Hamburger Button (mobile only) */}
                 <button
@@ -32,9 +35,17 @@ export default function Header() {
 
                 {/* Desktop Nav */}
                 <nav className="hidden md:flex gap-6 lg:gap-16 text-sm font-semibold text-[#84282D] text-[16px]">
-                    <Link to="/home" className="hover:text-red-400 transition-colors duration-200">Generate Your Ticket</Link>
-                    <Link to="/activate" className="hover:text-red-400 transition-colors duration-200">Activate Your Ticket</Link>
-                    <Link to="/claim" className="hover:text-red-400 transition-colors duration-200">Claim Your Ticket</Link>
+                    <a href="/home#generate-ticket" className="hover:text-red-400 transition-colors duration-200">
+                        Generate Your Ticket
+                    </a>
+                    <a href="/home#activate-ticket" className="hover:text-red-400 transition-colors duration-200">
+                        Activate Your Ticket
+                    </a>
+                    <a href="/home#claim-ticket" className="hover:text-red-400 transition-colors duration-200">
+                        Claim Your Ticket
+                    </a>
+
+                    <Link to="/winners" className="hover:text-red-400 transition-colors duration-200">Winners</Link>
                     <a
                         href="https://shrilalmahal.org/about-us"
                         target="_blank"
@@ -51,9 +62,29 @@ export default function Header() {
             {menuOpen && (
                 <div className="md:hidden px-4 pb-4">
                     <nav className="flex flex-col gap-3 text-sm font-semibold text-[#84282D] text-[16px]">
-                        <Link to="/home" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>Generate Your Ticket</Link>
-                        <Link to="/activate" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>Activate Your Ticket</Link>
-                        <Link to="/claim" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>Claim Your Ticket</Link>
+                        <a
+                            href="#generate-ticket"
+                            onClick={() => setMenuOpen(false)}
+                            className="hover:text-red-400 transition-colors duration-200"
+                        >
+                            Generate Your Ticket
+                        </a>
+                        <a
+                            href="#activate-ticket"
+                            onClick={() => setMenuOpen(false)}
+                            className="hover:text-red-400 transition-colors duration-200"
+                        >
+                            Activate Your Ticket
+                        </a>
+                        <a
+                            href="#claim-ticket"
+                            onClick={() => setMenuOpen(false)}
+                            className="hover:text-red-400 transition-colors duration-200"
+                        >
+                            Claim Your Ticket
+                        </a>
+
+                        <Link to="/winners" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>Winners</Link>
                         <a
                             href="https://shrilalmahal.org/about-us"
                             target="_blank"

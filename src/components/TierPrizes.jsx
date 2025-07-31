@@ -35,6 +35,15 @@ export default function TierPrizes() {
             .catch(() => setRows([]));
     }, []);
 
+    const highlightNumbers = (text) => {
+        return text.split(/(\d+(?:\/\d+)?(?:\s?Kg|\s?kg|\s?%|\s?Year|\s?Years|\s?Rs|\s?₹)?)/g).map((part, idx) => {
+            if (/\d/.test(part) && /\d+(?:\/\d+)?(?:\s?Kg|\s?kg|\s?%|\s?Year|\s?Years|\s?Rs|\s?₹)?/.test(part)) {
+                return <span key={idx} style={{ color: '#D4AF37' }}>{part}</span>;
+            }
+            return <span key={idx}>{part}</span>;
+        });
+    };
+
     return (
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
             {/* Background */}
@@ -47,14 +56,14 @@ export default function TierPrizes() {
                 <div className="max-w-6xl mx-auto text-center mb-16 animate-fade-in">
                     <p className="text-xs md:text-sm uppercase tracking-wider text-[#6B4F3F] mb-4 flex items-center justify-center">
                         <Star className="h-4 w-4 mr-2 text-[#D4AF37]" />
-                        SHRI LAL MAHAL LUCKY TICKET
+                        FROM GRAINS TO GAINS
                         <Star className="h-4 w-4 ml-2 text-[#D4AF37]" />
                     </p>
 
                     <h1 className="text-3xl md:text-5xl font-bold text-[#2D1F1F] leading-snug md:leading-tight mb-4 md:mb-6">
-                        Your Dreams Are Just{" "}
+                        It's Your Lucky Chance To Win{" "}
                         <span className="inline md:block bg-gradient-to-r from-[#A12828] to-[#F4C542] bg-clip-text text-transparent">
-                            One Ticket Away!
+                            Amazing Prizes!
                         </span>
                     </h1>
 
@@ -67,7 +76,7 @@ export default function TierPrizes() {
                 <div className="md:hidden animate-slide-up w-full max-w-md mx-auto">
                     <div className="sticky top-0 z-10 bg-[#811818] text-white px-4 py-3 flex items-center gap-2 rounded-t-lg">
                         <Trophy className="w-5 h-5" />
-                        <h2 className="text-base font-medium">Tier prizes</h2>
+                        <h2 className="text-base font-medium">The More You Match, The Bigger You Win!</h2>
                     </div>
 
                     <div>
@@ -77,10 +86,9 @@ export default function TierPrizes() {
                                 <div
                                     key={idx}
                                     className={`p-4 border shadow 
-                                        ${isBonus ? 'bg-[#FFFAE6] border-yellow-200' : 'bg-white border-gray-200'} 
+                                        ${isBonus ? 'bg-[#FFFFFF] border-yellow-200' : 'bg-white border-gray-200'} 
                                         ${idx === rows.length - 1 ? 'rounded-b-lg' : ''}`}
                                 >
-                                    {/* Match Type */}
                                     <div className="flex items-center gap-2 mb-2">
                                         {isBonus ? (
                                             <>
@@ -93,7 +101,6 @@ export default function TierPrizes() {
                                                     {row.match}
                                                 </span>
                                                 <div className="flex items-center gap-2">
-                                                    {/* <span className="font-semibold text-gray-800">{row.match}</span> */}
                                                     {matchTypeLabels[row.match] && (
                                                         <span className={`text-xs font-medium px-2 py-0.5 rounded ${matchTypeLabels[row.match].bg} ${matchTypeLabels[row.match].text}`}>
                                                             {matchTypeLabels[row.match].label}
@@ -115,8 +122,8 @@ export default function TierPrizes() {
                                         <p className="text-xs text-gray-500">
                                             Super Ticket Prize{!isBonus && ' (Better Rewards)'}
                                         </p>
-                                        <p className={`text-sm font-medium ${isBonus ? 'text-yellow-700 italic' : 'text-green-800 italic'}`}>
-                                            {row.super}
+                                        <p className={`text-sm font-medium ${isBonus ? 'text-green-800 italic' : 'text-green-800 italic'}`}>
+                                            {highlightNumbers(row.super)}
                                         </p>
                                     </div>
                                 </div>
@@ -131,7 +138,7 @@ export default function TierPrizes() {
                         <div className="bg-[#811818] text-white py-5 px-6">
                             <h2 className="text-2xl flex items-center justify-center">
                                 <Trophy className="h-6 w-6 mr-3" />
-                                Tier Prizes
+                                The More You Match, The Bigger You Win!
                             </h2>
                         </div>
 
@@ -155,7 +162,7 @@ export default function TierPrizes() {
                                         rows.map((row, idx) => {
                                             const isBonus = row.match.toLowerCase().includes("bonus");
                                             return (
-                                                <tr key={idx} className={`transition-colors ${isBonus ? 'bg-[#FFFAE6]' : 'hover:bg-[#FFF1E5]'}`}>
+                                                <tr key={idx} className={`transition-colors ${isBonus ? '' : 'hover:bg-[#FFF1E5]'}`}>
                                                     <td className="py-4 px-4">
                                                         <div className="flex items-center">
                                                             {isBonus ? (
@@ -169,7 +176,6 @@ export default function TierPrizes() {
                                                                         {row.match}
                                                                     </span>
                                                                     <div className="flex items-center gap-2">
-                                                                        {/* <span className="font-medium">{row.match}</span> */}
                                                                         {matchTypeLabels[row.match] && (
                                                                             <span className={`text-xs font-medium px-2 py-0.5 rounded ${matchTypeLabels[row.match].bg} ${matchTypeLabels[row.match].text}`}>
                                                                                 {matchTypeLabels[row.match].label}
@@ -183,11 +189,11 @@ export default function TierPrizes() {
                                                     <td className="py-4 px-4 text-[#2E7D32] font-semibold">{row.regular}</td>
                                                     <td className="py-4 px-4 text-[#2E7D32] font-semibold">
                                                         {isBonus ? (
-                                                            <span className="bg-[#FFEB99] text-[#B28900] px-3 py-1 rounded-full text-sm font-medium">
-                                                                {row.super}
+                                                            <span className="  px-3 py-1 rounded-full text-sm font-medium">
+                                                                {highlightNumbers(row.super)}
                                                             </span>
                                                         ) : (
-                                                            row.super
+                                                            highlightNumbers(row.super)
                                                         )}
                                                     </td>
                                                 </tr>
@@ -199,6 +205,20 @@ export default function TierPrizes() {
                         </div>
                     </div>
                 </div>
+                <p className="font-roboto font-normal text-[14px] leading-[30px] tracking-[0px] pl-2 pt-4">
+                    • Discount codes are valid only for purchases on{' '}
+                    <a
+                        href="https://www.basmati.club"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:opacity-80"
+                    >
+                        www.basmati.club
+                    </a>{' '}
+                    and will expire 1 month after the draw ends.**
+                </p>
+
+                <p className="font-roboto font-normal text-[14px] leading-[30px] tracking-[0px] pl-2">• Grand prize winners can choose between Empire Basmati or Fitness Brown Rice. A “1-year supply” is based on 60 kg (approx. daily use for 2 people), and a “1/2 Year supply” is 30 kg.*</p>
             </div>
         </section>
     );

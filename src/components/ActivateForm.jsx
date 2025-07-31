@@ -7,31 +7,47 @@ import {
     FaInstagram, FaCheckCircle, FaUpload
 } from 'react-icons/fa';
 
-export default function ActivateForm({ onSubmitted }) {
+export default function ActivateForm({ onSubmitted, instaUrl }) {
     const [form, setForm] = useState({
         ticketID: '',
         name: '',
-        email: '',
-        phone: '',
         instagram: '',
-        ticketImage: null,
+        ticketImage: null, // <-- updated from ticketImage
         proofImage: null,
     });
 
+
+    const [contactValue, setContactValue] = useState('');
     const [errors, setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
 
     const validate = () => {
         const errs = {};
-        const cleanedPhone = form.phone.replace(/\D/g, '');
 
         if (!form.ticketID.trim()) errs.ticketID = "Ticket ID is required";
-        if (!form.name.trim()) errs.name = "Name is required";
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = "Invalid email";
-        if (cleanedPhone.length < 10 || cleanedPhone.length > 15) errs.phone = "Phone must include country code and be valid";
-        if (!/^@[\w.]+$/.test(form.instagram)) errs.instagram = "Instagram must start with @ and use only letters, numbers, dot or underscore";
-        // if (!form.ticketImage) errs.ticketImage = "Ticket image is required";
-        if (!form.proofImage) errs.proofImage = "Proof of task is required";
+        // if (!form.name.trim()) errs.name = "Name is required";
+
+        if (!contactValue.trim()) {
+            errs.contact = "Email or phone is required";
+        } else if (contactValue.includes('@')) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(contactValue)) {
+                errs.contact = "Invalid email format";
+            }
+        } else {
+            const cleanedPhone = contactValue.replace(/\D/g, '');
+            if (cleanedPhone.length < 10 || cleanedPhone.length > 15) {
+                errs.contact = "Phone number must be valid and include country code";
+            }
+        }
+
+        // if (!/^@[\w.]+$/.test(form.instagram)) {
+        //     errs.instagram = "Instagram must start with @ and use only letters, numbers, dot or underscore";
+        // }
+
+        if (!form.proofImage) errs.proofImage = "Comment proof is required";
+        if (!form.ticketImage) errs.ticketImage = "Story proof is required"; // ✅ match input name
+
 
         setErrors(errs);
         return Object.keys(errs).length === 0;
@@ -48,13 +64,27 @@ export default function ActivateForm({ onSubmitted }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!validate()) return;
 
         const formData = new FormData();
         Object.entries(form).forEach(([key, value]) => {
             formData.append(key, value);
         });
+
+        // Add either email or phone, plus optional countryCode
+        if (contactValue.includes('@')) {
+            formData.append('email', contactValue);
+        } else {
+            const cleaned = contactValue.replace(/\D/g, '');
+            const countryCode = cleaned.length > 10 ? cleaned.slice(0, cleaned.length - 10) : '';
+            const phoneNumber = `+${cleaned}`;
+            formData.append('phone', phoneNumber);
+            formData.append('countryCode', countryCode);
+        }
+
+        // Add optional name & instagram if they exist
+        if (form.name) formData.append('name', form.name);
+        if (form.instagram) formData.append('instagram', form.instagram);
 
         try {
             await submitActivate(formData);
@@ -68,8 +98,9 @@ export default function ActivateForm({ onSubmitted }) {
                 const msg = resData.message;
                 const newErrors = {};
 
-                if (msg.includes("phone")) newErrors.phone = "Phone already used in this competition.";
-                if (msg.includes("instagram")) newErrors.instagram = "Instagram already used in this competition.";
+                if (msg.includes("phone") || msg.includes("email")) {
+                    newErrors.contact = "This contact is already used in this competition.";
+                }
                 if (msg.includes("ticket")) newErrors.ticketID = "Ticket already claimed.";
 
                 setErrors(prev => ({ ...prev, ...newErrors }));
@@ -80,9 +111,10 @@ export default function ActivateForm({ onSubmitted }) {
     };
 
     return (
-        <div className="py-10 px-4">
-            <div className="bg-gradient-to-br from-[#e8e1dc] to-[#84282D] border border-gray-200 shadow-md rounded-xl p-6 sm:p-8">
-                <h2 className="text-2xl font-bold mb-6 text-black text-left">Activate Your Ticket</h2>
+        <div className="w-full">
+            <div className="max-w-xl w-full bg-gradient-to-br from-[#ffffffaa] to-[#84282D66] border border-gray-200 shadow-md rounded-xl p-6 sm:p-8 mx-auto">
+                <h2 className="text-2xl font-bold mb-6 text-black text-left hidden md:block">Activate Your Ticket</h2>
+                <h2 className="text-xl font-bold mb-6 text-black text-left text-center block md:hidden">Step 2: Activate Your Ticket </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <InputField
@@ -93,6 +125,7 @@ export default function ActivateForm({ onSubmitted }) {
                         placeholder="Ticket ID"
                         icon={<FaTicketAlt />}
                     />
+                    {/* 
                     <InputField
                         name="name"
                         value={form.name}
@@ -100,22 +133,18 @@ export default function ActivateForm({ onSubmitted }) {
                         onChange={handleChange}
                         placeholder="Full Name"
                         icon={<FaUser />}
+                    /> */}
+
+                    <SmartContactInput
+                        value={contactValue}
+                        setValue={(val) => {
+                            setContactValue(val);
+                            setErrors(prev => ({ ...prev, contact: '' }));
+                        }}
+                        error={errors.contact}
                     />
-                    <PhoneField
-                        value={form.phone}
-                        error={errors.phone}
-                        onChange={(val) => setForm((prev) => ({ ...prev, phone: `+${val}` }))}
-                    />
-                    <InputField
-                        name="email"
-                        type="email"
-                        value={form.email}
-                        error={errors.email}
-                        onChange={handleChange}
-                        placeholder="Email"
-                        icon={<FaEnvelope />}
-                    />
-                    <div>
+
+                    {/* <div>
                         <div className="relative">
                             <FaInstagram className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
                             <input
@@ -136,22 +165,23 @@ export default function ActivateForm({ onSubmitted }) {
                             />
                         </div>
                         {errors.instagram && <p className="text-red-500 text-sm mt-1">{errors.instagram}</p>}
-                    </div>
+                    </div> */}
 
-
-                    {/* <FileInputField
-                        name="ticketImage"
-                        placeholder="Upload Ticket Screenshot"
-                        icon={<FaUpload />}
-                        onChange={handleChange}
-                        error={errors.ticketImage}
-                    /> */}
                     <FileInputField
                         name="proofImage"
-                        placeholder="Upload Task Proof"
+                        placeholder="Comment Proof"
                         icon={<FaUpload />}
                         onChange={handleChange}
                         error={errors.proofImage}
+                        instaUrl={instaUrl} // Pass the Instagram URL prop
+                    />
+
+                    <FileInputField
+                        name="ticketImage"
+                        placeholder="Story Proof"
+                        icon={<FaUpload />}
+                        onChange={handleChange}
+                        error={errors.ticketImage}
                     />
 
                     <button
@@ -170,7 +200,7 @@ export default function ActivateForm({ onSubmitted }) {
     );
 }
 
-// Input field with icon
+// Input with icon
 function InputField({ name, type = 'text', value, error, onChange, placeholder, icon }) {
     return (
         <div>
@@ -191,29 +221,67 @@ function InputField({ name, type = 'text', value, error, onChange, placeholder, 
     );
 }
 
-// Phone input field
-function PhoneField({ value, onChange, error }) {
+// Smart input for phone/email with live type detection
+function SmartContactInput({ value, setValue, error }) {
+    // Detecting phone only if no @ or letters and 8+ digits
+    const cleaned = value.replace(/\D/g, '');
+    const containsAtOrLetters = /[@a-zA-Z]/.test(value);
+    const isDigitsOnly = /^\+?[0-9\s\-().]*$/.test(value);
+    const isLikelyPhone = !containsAtOrLetters && isDigitsOnly && cleaned.length >= 8;
+
+    const handlePhoneChange = (val) => {
+        setValue(val ? `+${val}` : '');
+    };
+
+    const handleTextChange = (e) => {
+        const input = e.target.value;
+        setValue(input);
+    };
+
     return (
         <div>
-            <div className="relative">
-                <PhoneInput
-                    country={'in'}
-                    value={value}
-                    onChange={onChange}
-                    inputProps={{ name: 'phone', required: true }}
-                    inputClass="!w-full !pl-12 !py-2 !pr-4 !border !rounded-md !shadow-sm !text-black focus:!ring focus:!ring-blue-300"
-                    containerClass="!w-full"
-                    buttonClass="!bg-gray-100 !border-r !border-gray-300"
-                />
-                <FaPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <div className="relative transition-all duration-150 ease-in-out">
+                {isLikelyPhone ? (
+                    <>
+                        <PhoneInput
+                            country={'in'}
+                            value={value.replace('+', '')}
+                            onChange={handlePhoneChange}
+                            inputProps={{
+                                name: 'contact',
+                                required: true,
+                                // autoFocus: true,
+                            }}
+                            inputClass="!w-full !pl-12 !py-2 !pr-4 !border !rounded-md !shadow-sm !text-black focus:!ring focus:!ring-blue-300"
+                            containerClass="!w-full"
+                            buttonClass="!bg-gray-100 !border-r !border-gray-300"
+                        />
+                        <FaPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    </>
+                ) : (
+                    <>
+                        <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
+                        <input
+                            type="text"
+                            name="contact"
+                            value={value}
+                            onChange={handleTextChange}
+                            placeholder="Enter email or phone number"
+                            autoComplete="off"
+                            // autoFocus
+                            className="pl-10 pr-4 py-2 w-full border rounded-md shadow-sm focus:ring focus:ring-blue-300 text-black transition-all duration-150"
+                        />
+                    </>
+                )}
             </div>
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>
     );
 }
 
-// File input field with icon and file name
-function FileInputField({ name, placeholder, icon, onChange, error }) {
+
+// File input with icon and file name
+function FileInputField({ name, placeholder, icon, onChange, error, instaUrl }) {
     const [fileName, setFileName] = useState(null);
 
     const handleFileChange = (e) => {
@@ -247,6 +315,28 @@ function FileInputField({ name, placeholder, icon, onChange, error }) {
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
             </label>
+            {name == 'proofImage' && (
+                <p className="block md:hidden text-[13px] text-black font-semibold leading-[1.4] mt-1">
+                    Comment your ticket number on the{' '}
+                    <a
+                        href={instaUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#E1306C] font-bold hover:opacity-80"
+                    >
+                        Instagram post
+                    </a>{' '}
+                    & Tag 5 friends in the same comment
+                </p>
+
+            )}
+            {name == 'ticketImage' && (
+                <p className="block md:hidden text-[13px] text-black font-semibold leading-none  decoration-solid decoration-0 mt-1 leading-[1.4]">
+                    Share your ticket in an Instagram Story Tag
+                    @shrilalmahalgroup
+                </p>
+            )}
+
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>
     );

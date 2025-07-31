@@ -1,12 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import TicketPreview from './TicketPreview';
-import { submitTicket } from '../api/api';
+import { submitTicket, getInstagramPostUrl } from '../api/api';
 import { FaUser, FaPhone, FaEnvelope, FaInstagram, FaUpload, FaCheckCircle, FaTimes } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
 export default function LandingForm() {
+    const [collectedAt, setCollectedAt] = useState('');
+    useEffect(() => {
+        async function fetchInstagramData() {
+            try {
+                const { collectedAt } = await getInstagramPostUrl();
+                setCollectedAt(collectedAt); // optional: use this if needed
+            } catch (error) {
+                console.error('Failed to load Instagram URL:', error.message);
+            }
+        }
+
+        fetchInstagramData();
+    }, []);
     const [form, setForm] = useState({
         name: '',
         phone: '',
@@ -57,8 +70,10 @@ export default function LandingForm() {
         if (!validate()) return;
 
         const issueDate = new Date().toLocaleDateString('en-GB');
-        const expiryDate = '30-06-2026';
+        const expiryDate = collectedAt;
 
+
+        console.log('collectedAt, expiryDate  ', collectedAt, expiryDate);
         const formData = new FormData();
         formData.append('name', form.name);
         formData.append('phone', form.phone);
@@ -95,7 +110,8 @@ export default function LandingForm() {
         <div className="   ">
             <div className="max-w-xl w-full bg-gradient-to-br from-[#ffffffaa] to-[#84282D66] border border-gray-200 shadow-md rounded-xl p-6 sm:p-8">
 
-                <h2 className="text-2xl font-bold mb-6 text-black text-left">Lucky Ticket Form</h2>
+                <h2 className="text-2xl font-bold mb-6 text-black text-left hidden md:block">Lucky Ticket Form</h2>
+                <h2 className="text-xl font-bold mb-6 text-black text-left text-center block md:hidden whitespace-nowrap">Step 1: Generate Your Ticket</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
 
@@ -154,6 +170,18 @@ export default function LandingForm() {
                                 className="pl-10 pr-4 py-2 w-full border rounded-md shadow-sm focus:ring focus:ring-blue-300"
                             />
                         </div>
+                        <p className="block md:hidden text-[13px] text-black font-semibold leading-[1.3] text-center mt-1.5">
+                            Follow us on Instagram{' '}
+                            <a
+                                href="https://www.instagram.com/shrilalmahalgroup"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[#E1306C] font-bold hover:opacity-80"
+                            >
+                                @shrilalmahalgroup
+                            </a>
+                        </p>
+
                         {errors.instagram && <p className="text-red-500 text-sm mt-1">{errors.instagram}</p>}
                     </div>
 

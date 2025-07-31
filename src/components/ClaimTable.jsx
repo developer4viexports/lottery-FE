@@ -94,7 +94,7 @@ export default function ClaimTable({ token }) {
                 <table className="min-w-full border text-sm">
                     <thead className="bg-gray-100">
                         <tr>
-                            {["S. No", "Name", "Email", "Phone", "Instagram", "Ticket ID", "Numbers", "Created At"].map((h, i) => (
+                            {["S. No", "Name", "Email", "Phone", "Instagram", "Ticket ID", "Numbers", "Address", "Created At"].map((h, i) => (
                                 <th key={i} className="p-2 border">{h}</th>
                             ))}
                         </tr>
@@ -108,7 +108,8 @@ export default function ClaimTable({ token }) {
                                 <td className="p-2 border">{c.phone}</td>
                                 <td className="p-2 border">{c.instagram}</td>
                                 <td className="p-2 border">{c.ticketID}</td>
-                                <td className="p-2 border">{Array.isArray(c.numbers) ? c.numbers.join(', ') : ''}</td>
+                                <td className="p-2 border">{Array.isArray(c.numbers) ? c.numbers.join(' ') : ''}</td>
+                                <td className="p-2 border">{c.address}</td>
                                 <td className="p-2 border">{formatDateTime(c.createdAt)}</td>
                             </tr>
                         ))}
