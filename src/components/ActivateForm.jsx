@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import { submitActivate } from '../api/api';
+import { submitActivate, getTicketDetails } from '../api/api';
 import {
     FaTicketAlt, FaUser, FaEnvelope, FaPhone,
     FaInstagram, FaCheckCircle, FaUpload
 } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 
 export default function ActivateForm({ onSubmitted, instaUrl }) {
     const [form, setForm] = useState({
@@ -16,6 +17,26 @@ export default function ActivateForm({ onSubmitted, instaUrl }) {
         proofImage: null,
     });
 
+    useEffect(() => {
+        const fetchTicketDetails = async () => {
+            if (!form.ticketID || form.ticketID.length < 6) return; // wait until there's a likely full ticket ID
+
+            try {
+                const res = await getTicketDetails(form.ticketID.trim());
+                if (res?.name) {
+                    setForm(prev => ({
+                        ...prev,
+                        name: res.name || '',
+                    }));
+                    console.log('first Name set from ticket details:', res);
+                }
+            } catch (err) {
+                console.warn('Ticket not found or error fetching:', err.message);
+            }
+        };
+
+        fetchTicketDetails();
+    }, [form.ticketID]);
 
     const [contactValue, setContactValue] = useState('');
     const [errors, setErrors] = useState({});
@@ -55,19 +76,35 @@ export default function ActivateForm({ onSubmitted, instaUrl }) {
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
-        setForm(prev => ({
-            ...prev,
-            [name]: files ? files[0] : value
-        }));
+
+        if (name === 'ticketID') {
+            setForm({
+                ...form,
+                ticketID: value,
+                name: '', // Clear name when ticketID changes
+            });
+        } else {
+            setForm({
+                ...form,
+                [name]: files ? files[0] : value
+            });
+        }
+
         setErrors(prev => ({ ...prev, [name]: '' }));
     };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validate()) return;
 
         const formData = new FormData();
-        Object.entries(form).forEach(([key, value]) => {
+
+        // Destructure out fields you will conditionally add later
+        const { name, instagram, ...rest } = form;
+
+        // Add all other fields (excluding name/instagram for now)
+        Object.entries(rest).forEach(([key, value]) => {
             formData.append(key, value);
         });
 
@@ -82,18 +119,26 @@ export default function ActivateForm({ onSubmitted, instaUrl }) {
             formData.append('countryCode', countryCode);
         }
 
-        // Add optional name & instagram if they exist
-        if (form.name) formData.append('name', form.name);
-        if (form.instagram) formData.append('instagram', form.instagram);
+        // ✅ Add `name` and `instagram` only once, conditionally
+        if (typeof name === 'string' && name.trim()) {
+            formData.append('name', name.trim());
+        }
+
+        if (typeof instagram === 'string' && instagram.trim()) {
+            formData.append('instagram', instagram.trim());
+        }
 
         try {
             await submitActivate(formData);
+            toast.success('🎉 Ticket activated successfully!');
             setSubmitted(true);
             onSubmitted?.();
         } catch (error) {
             const resData = error?.response;
+
             if (resData?.field && resData?.message) {
                 setErrors(prev => ({ ...prev, [resData.field]: resData.message }));
+                toast.error(resData.message); // Show specific error
             } else if (resData?.message?.includes("Duplicate")) {
                 const msg = resData.message;
                 const newErrors = {};
@@ -104,11 +149,16 @@ export default function ActivateForm({ onSubmitted, instaUrl }) {
                 if (msg.includes("ticket")) newErrors.ticketID = "Ticket already claimed.";
 
                 setErrors(prev => ({ ...prev, ...newErrors }));
+                toast.error(resData.message); // Show duplicate error
             } else {
-                alert(resData?.message || "Something went wrong. Please try again.");
+                toast.error(resData?.message || "Something went wrong. Please try again.");
             }
         }
+
+
+
     };
+
 
     return (
         <div className="w-full">
@@ -125,6 +175,14 @@ export default function ActivateForm({ onSubmitted, instaUrl }) {
                         placeholder="Ticket ID"
                         icon={<FaTicketAlt />}
                     />
+                    {form.name ? (
+                        // <div className="text-sm text-gray-800  border border-gray-800 rounded-md px-3 py-2 mt-2 flex flex-row justify-around items-center ">
+                        // {form.name && (
+                        <p className="text-black font-bold text-sm mt-1">Name: {form.name}</p>
+                        // )}
+                        // </div>
+                    ) : null}
+
                     {/* 
                     <InputField
                         name="name"
@@ -192,9 +250,9 @@ export default function ActivateForm({ onSubmitted, instaUrl }) {
                     </button>
                 </form>
 
-                {submitted && (
+                {/* {submitted && (
                     <p className="text-green-600 text-sm mt-4">Your claim has been submitted successfully!</p>
-                )}
+                )} */}
             </div>
         </div>
     );
@@ -213,7 +271,7 @@ function InputField({ name, type = 'text', value, error, onChange, placeholder, 
                     onChange={onChange}
                     placeholder={placeholder}
                     required
-                    className="pl-10 pr-4 py-2 w-full border rounded-md shadow-sm focus:ring focus:ring-blue-300 text-black"
+                    className="pl-10 pr-4 py-2 w-full border rounded-md shadow-sm focus:ring focus:ring-blue-300 text-black placeholder:text-sm"
                 />
             </div>
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
@@ -269,7 +327,7 @@ function SmartContactInput({ value, setValue, error }) {
                             placeholder="Enter email or phone number"
                             autoComplete="off"
                             // autoFocus
-                            className="pl-10 pr-4 py-2 w-full border rounded-md shadow-sm focus:ring focus:ring-blue-300 text-black transition-all duration-150"
+                            className="pl-10 pr-4 py-2 w-full border rounded-md shadow-sm focus:ring focus:ring-blue-300 text-black transition-all duration-150 placeholder:text-sm"
                         />
                     </>
                 )}
@@ -317,7 +375,7 @@ function FileInputField({ name, placeholder, icon, onChange, error, instaUrl }) 
             </label>
             {name == 'proofImage' && (
                 <p className="block md:hidden text-[13px] text-black font-semibold leading-[1.4] mt-1">
-                    Comment your ticket number on the{' '}
+                    Comment your ticket number on this{' '}
                     <a
                         href={instaUrl}
                         target="_blank"

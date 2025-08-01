@@ -15,8 +15,8 @@ export default function Home() {
         <>
 
             <Header />
-            <TierPrizes />
             <HowItWorks />
+            <TierPrizes />
             <HowYourTicketWorks />
 
             {/* Add ID to Hero Section */}

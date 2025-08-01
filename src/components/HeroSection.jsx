@@ -33,7 +33,7 @@ export default function HeroSection() {
                     {/* Step 1 */}
                     <div className="flex items-start gap-3 sm:gap-4 mb-5 sm:mb-6">
                         <div
-                            className="bg-white rounded-full w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center border border-gray-200 text-lg sm:text-xl text-gray-700"
+                            className="shrink-0 bg-white rounded-full w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center border border-gray-200 text-lg sm:text-xl text-gray-700"
                             style={{ boxShadow: '0px 4px 6px 0px #00000017' }}
                         >
                             <FaInstagram />
@@ -47,15 +47,16 @@ export default function HeroSection() {
                                     rel="noopener noreferrer"
                                     className="text-[#E1306C] font-bold hover:opacity-80"
                                 >
-                                    Instagram
-                                </a>
+                                    Instagram @shrilalmahalgroup
+                                </a>{' '}
+                                to see daily lucky numbers & prize updates!
                             </p>
-
 
                             <p className="text-[#808080] text-xs sm:text-sm">
-                                Head over to SLM and click Follow to stay updated
+                                Just tap the link and hit Follow to never miss a draw.
                             </p>
                         </div>
+
                     </div>
 
                     {/* Step 2 */}

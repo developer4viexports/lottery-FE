@@ -45,16 +45,16 @@ export default function Header() {
                         Claim Your Ticket
                     </a>
 
-                    <Link to="/winners" className="hover:text-red-400 transition-colors duration-200">Winners</Link>
+                    {/* <Link to="/winners" className="hover:text-red-400 transition-colors duration-200">Winners</Link> */}
                     <a
                         href="https://shrilalmahal.org/about-us"
-                        target="_blank"
+                        // target="_blank"
                         rel="noopener noreferrer"
                         className="hover:text-red-400 transition-colors duration-200"
                     >
                         About Us
                     </a>
-                    <Link to="/contact" className="hover:text-red-400 transition-colors duration-200">Contact Us</Link>
+                    {/* <Link to="/contact" className="hover:text-red-400 transition-colors duration-200">Contact Us</Link> */}
                 </nav>
             </div>
 
@@ -84,17 +84,17 @@ export default function Header() {
                             Claim Your Ticket
                         </a>
 
-                        <Link to="/winners" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>Winners</Link>
+                        {/* <Link to="/winners" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>Winners</Link> */}
                         <a
                             href="https://shrilalmahal.org/about-us"
-                            target="_blank"
+                            // target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-red-400 transition-colors duration-200"
                             onClick={() => setMenuOpen(false)}
                         >
                             About Us
                         </a>
-                        <Link to="/contact" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>Contact Us</Link>
+                        {/* <Link to="/contact" className="hover:text-red-400" onClick={() => setMenuOpen(false)}>Contact Us</Link> */}
                     </nav>
                 </div>
             )}

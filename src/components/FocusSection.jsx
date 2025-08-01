@@ -29,7 +29,7 @@ export default function FocusSection() {
 
                 {/* Fitness Brown Basmati Rice */}
                 <div className="text-center">
-                    <a href="https://basmati.club/" target="_blank" rel="noopener noreferrer">
+                    <a href="https://basmati.club/products/fitness-brown-basmati-rice-jar?_pos=2&_sid=80c318990&_ss=r" target="_blank" rel="noopener noreferrer">
                         {/* Desktop Image */}
                         <img
                             src={riceImg}

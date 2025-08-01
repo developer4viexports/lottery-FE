@@ -1,7 +1,8 @@
 import { FaTicketAlt, FaClock, FaTrophy } from 'react-icons/fa';
 import { HiOutlineSwitchHorizontal } from 'react-icons/hi';
+import { Star, Trophy, Crown } from 'lucide-react';
 
-function FeatureCard({ icon, title, iconBgColor }) {
+function FeatureCard({ icon, title, description, iconBgColor }) {
     return (
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 p-4 bg-white dark:bg-gray-900 rounded-lg shadow-sm hover:shadow-md transition min-h-[80px]">
             {/* Icon circle */}
@@ -19,6 +20,9 @@ function FeatureCard({ icon, title, iconBgColor }) {
                 <p className="text-black font-semibold text-sm leading-tight">
                     {title}
                 </p>
+                <p className="text-muted-foreground text-[13px] text-gray-800 leading-relaxed">
+                    {description}
+                </p>
             </div>
         </div>
     );
@@ -29,45 +33,59 @@ export default function HowItWorks() {
         {
             icon: <FaTicketAlt />,
             title: 'Your ticket has 7 random numbers',
+            description: "Every ticket gives you 7 random numbers between 00–99. Example: 12, 25, 37, 41, 58, 63, 90.",
             iconBgColor: '#ef4444',
         },
         {
             icon: <FaClock />,
             title: "We'll reveal 1 number every 24 hours",
+            description: "We’ll reveal one lucky number per day on Instagram. Like 12 on Day 1, 25 on Day 2, etc.",
             iconBgColor: '#3b82f6',
         },
         {
             icon: <HiOutlineSwitchHorizontal />,
             title: 'At the end of the cycle, compare your numbers',
+            description: "After 7 days, compare your numbers with ours. Example: You have 5 matches? You're eligible for Bronze Prize!",
             iconBgColor: '#22c55e',
         },
         {
             icon: <FaTrophy />,
-            title: (
-                <>
-                    Matched enough? <br /> You win!
-                </>
-            ),
-
+            title: "Matched enough? You win!",
+            description: "The more you match, the bigger the prize. First come, first win — don’t miss out!",
             iconBgColor: '#eab308',
         },
     ];
 
     return (
-        <section className="w-full py-12 px-4 sm:px-6 lg:px-8 bg-white">
-            <div className="max-w-6xl mx-auto">
+        <section className="w-full  min-h-screen bg-white pb-12">
+            <div className=" mx-auto text-center mb-16 animate-fade-in pt-12">
+                <p className="text-xs md:text-sm uppercase tracking-wider text-[#6B4F3F] mb-4 flex items-center justify-center">
+                    <Star className="h-4 w-4 mr-2 text-[#D4AF37]" />
+                    FROM GRAINS TO GAINS
+                    <Star className="h-4 w-4 ml-2 text-[#D4AF37]" />
+                </p>
+
+                <h1 className="text-3xl md:text-5xl font-bold text-[#2D1F1F] leading-snug md:leading-tight mb-4 md:mb-6">
+                    It's Your Lucky Chance To Win{" "}
+                    <span className="inline md:block bg-gradient-to-r from-[#A12828] to-[#F4C542] bg-clip-text text-transparent">
+                        Amazing Prizes!
+                    </span>
+                </h1>
+            </div>
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
                 <div className="text-center mb-10">
-                    <h2 className="text-3xl font-bold tracking-tight text-black">
+                    <h2 className="text-2xl T  text-gray-600 tracking-tight text-black">
                         How It Works
                     </h2>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2  gap-6 lg:gap-8">
                     {features.map((feature, index) => (
                         <FeatureCard
                             key={index}
                             icon={feature.icon}
                             title={feature.title}
+                            description={feature.description}
                             iconBgColor={feature.iconBgColor}
                         />
                     ))}

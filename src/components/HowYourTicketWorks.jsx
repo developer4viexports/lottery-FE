@@ -78,10 +78,10 @@ const HowYourTicketWorks = () => {
     return (
         <section className="bg-[#FFF7ED] py-[40px] md:py-[80px] px-4 md:px-0">
             <div className="w-full max-w-[1440px] mx-auto md:px-[120px]">
-                <HeadingBlock
+                {/* <HeadingBlock
                     title="How to Get Ticket"
                     subtitle="Each ticket has 7 random numbers from 00–99. We'll reveal one number daily on our Instagram stories. At the end of the draw, if your numbers match enough revealed numbers, you win!"
-                />
+                /> */}
 
                 <div className="flex flex-col md:flex-row gap-[24px] items-stretch md:items-start justify-center">
                     {steps.map((step) => {

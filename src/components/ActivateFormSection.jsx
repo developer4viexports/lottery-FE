@@ -46,28 +46,30 @@ export default function ActivateFormSection() {
                     </h2>
 
                     {/* Step 1 */}
-                    <div className="flex items-start sm:items-center gap-3 sm:gap-4 mb-5 sm:mb-6">
+                    <div className="flex items-start  gap-3 sm:gap-4 mb-5 sm:mb-6">
                         <div
-                            className="shrink-0 bg-white rounded-full w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center border border-gray-200 text-xl text-gray-700"
+                            className="shrink-0 bg-white rounded-full w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center border border-gray-200 text-xl text-gray-700 mt-2"
                             style={{ boxShadow: '0px 4px 6px 0px #00000017' }}
                         >
                             <FaInstagram />
                         </div>
                         <div>
                             <p className="font-semibold text-[#402813] text-sm sm:text-base">
-                                Comment your ticket number on this{' '}
+                                Go to this{' '}
                                 <a
-                                    href={instaUrl}  // ← replace with the exact post URL
+                                    href={instaUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-[#E1306C] font-bold hover:opacity-80"
                                 >
                                     Instagram post
-                                </a>
+                                </a>{' '}
+                                and comment your ticket number to enter the draw!
                             </p>
 
                             <p className="text-[#808080] text-xs sm:text-sm">
-                                Tag 5 friends in the same comment (Example: “My ticket: SLH-2025-00123 — tagging @friend1 @friend2 @friend3 @friend4 @friend5”)
+                                Tag 5 friends in the same comment.<br />
+                                Example: “My ticket: SLH-2025-00123 — tagging @friend1 @friend2 @friend3 @friend4 @friend5”
                             </p>
                         </div>
                     </div>

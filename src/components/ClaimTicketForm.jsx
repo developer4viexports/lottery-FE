@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import { FaUser, FaPhone, FaEnvelope, FaInstagram, FaTag } from 'react-icons/fa';
+import { FaUser, FaPhone, FaEnvelope, FaInstagram, FaTag, FaHome } from 'react-icons/fa';
 import { submitClaim, getTicketDetails } from '../api/api';
 import toast from 'react-hot-toast';
 
@@ -22,13 +22,12 @@ export default function ClaimTicketForm() {
 
             try {
                 const res = await getTicketDetails(form.ticketID.trim());
-                if (res?.name || res?.instagram) {
+                if (res?.name) {
                     setForm(prev => ({
                         ...prev,
                         name: res.name || '',
-                        instagram: res.instagram || '',
                     }));
-                    console.log('first name and instagram set from ticket details:', res);
+                    console.log('first Name set from ticket details:', res);
                 }
             } catch (err) {
                 console.warn('Ticket not found or error fetching:', err.message);
@@ -78,7 +77,7 @@ export default function ClaimTicketForm() {
                 ...prev,
                 ticketID: value,
                 name: '',         // clear fetched name
-                instagram: '',    // clear fetched instagram
+                // instagram: '',    // clear fetched instagram
             }));
         } else {
             setForm(prev => ({ ...prev, [name]: value }));
@@ -144,26 +143,19 @@ export default function ClaimTicketForm() {
         <div className="max-w-xl w-full bg-gradient-to-br from-[#ffffffaa] to-[#84282D66] border border-gray-200 shadow-md rounded-xl p-6 sm:p-8 mx-auto">
             <h2 className="text-2xl font-bold mb-6 text-black text-left hidden md:block">Claim your Prize</h2>
             <h2 className="text-xl font-bold text-black text-center text-left block md:hidden">Step 3: Claim your Prize</h2>
-            <p className="block md:hidden text-[14px] text-gray-600 font-medium leading-[18px] tracking-normal text-center mt-1 mb-2">
+            <p className="block md:hidden text-[14px] text-gray-600 font-medium leading-[18px] tracking-normal text-center mt-1 mb-2">   
                 We’ll be revealing 1 lucky number per day on our Instagram page. Follow our story highlights and posts at @shrilalmahalgroup
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-5">
 
-                <InputField name="ticketID" value={form.ticketID} error={errors.ticketID} onChange={handleChange} placeholder="Ticket ID (e.g., SLH-2025-XXXXXX)" icon={<FaTag />} />
-                {form.name || form.instagram ? (
-                    <div className="text-sm text-gray-800 bg-yellow-50 border border-yellow-300 rounded-md px-3 py-2 mt-2 flex flex-row justify-around items-center ">
-                        {form.name && (
-                            <p className="mb-1">
-                                <span className="font-semibold text-gray-700">Name:</span> {form.name}
-                            </p>
-                        )}
-                        {form.instagram && (
-                            <p>
-                                <span className="font-semibold text-gray-700">Instagram:</span> {form.instagram}
-                            </p>
-                        )}
-                    </div>
+                <InputField name="ticketID" value={form.ticketID} error={errors.ticketID} onChange={handleChange} placeholder="Ticket ID ( SLH-2025-XXXXXX )" icon={<FaTag />} />
+                {form.name ? (
+                    // <div className="text-sm text-gray-800  border border-gray-800 rounded-md px-3 py-2 mt-2 flex flex-row justify-around items-center ">
+                        // {form.name && (
+                            <p className="text-black font-bold text-sm mt-1">Name: {form.name}</p>
+                        // )}
+                    // </div>
                 ) : null}
 
                 {/* <InputField name="numbers" value={form.numbers} error={errors.numbers} onChange={handleChange} placeholder="Ticket Numbers (e.g., 01,02,03,04,05,06,07)" icon={<FaTag />} />
@@ -180,7 +172,7 @@ export default function ClaimTicketForm() {
                     error={errors.contact}
                 />
 
-                <InputField name="address" value={form.address} error={errors.address} onChange={handleChange} placeholder="Shipping Address" icon={<FaTag />} />
+                <InputField name="address" value={form.address} error={errors.address} onChange={handleChange} placeholder="Shipping Address" icon={<FaHome />} />
 
                 {/* <InputField name="instagram" value={form.instagram} error={errors.instagram} onChange={(e) => {
                     const val = e.target.value;
@@ -215,7 +207,7 @@ function InputField({ name, type = "text", value, error, onChange, placeholder, 
                     onChange={onChange}
                     required
                     placeholder={placeholder}
-                    className="pl-10 pr-4 py-2 w-full border rounded-md shadow-sm focus:ring focus:ring-blue-300"
+                    className="pl-10 pr-4 py-2 w-full border rounded-md shadow-sm focus:ring focus:ring-blue-300 placeholder:text-sm"
                 />
             </div>
             {name == 'ticketID' && (
@@ -275,7 +267,7 @@ function SmartContactInput({ value, setValue, error }) {
                             placeholder="Enter email or phone number"
                             autoComplete="off"
                             // autoFocus
-                            className="pl-10 pr-4 py-2 w-full border rounded-md shadow-sm focus:ring focus:ring-blue-300 transition-all duration-150"
+                            className="pl-10 pr-4 py-2 w-full border rounded-md shadow-sm focus:ring focus:ring-blue-300 transition-all duration-150 placeholder:text-sm"
                         />
                     </>
                 )}

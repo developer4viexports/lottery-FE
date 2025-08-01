@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getPrizeTiers } from '../api/api';
+import { getPrizeTiers, getInstagramPostUrl } from '../api/api';
 import { Star, Trophy, Crown } from 'lucide-react';
 
 const matchTypeLabels = {
@@ -11,10 +11,23 @@ const matchTypeLabels = {
 
 export default function TierPrizes() {
     const [rows, setRows] = useState([]);
+    const [dates, setDates] = useState({ startDate: null, revealDate: null, endDate: null });
 
     useEffect(() => {
-        getPrizeTiers()
-            .then(tiers => {
+        // Load draw dates
+        async function fetchInstagramData() {
+            try {
+                const { startDate, revealDate, endDate } = await getInstagramPostUrl();
+                setDates({ startDate, revealDate, endDate });
+            } catch (error) {
+                console.error('Failed to load Instagram URL:', error.message);
+            }
+        }
+
+        // Load prize tiers
+        async function fetchPrizeTiers() {
+            try {
+                const tiers = await getPrizeTiers();
                 if (!tiers || !Array.isArray(tiers)) return setRows([]);
 
                 const matchTypes = [...new Set(tiers.map(t => t.matchType))];
@@ -31,9 +44,23 @@ export default function TierPrizes() {
                 const desiredOrder = ['7/7', '6/7', '5/7', '4/7', 'Bonus Entry'];
                 formattedRows.sort((a, b) => desiredOrder.indexOf(a.match) - desiredOrder.indexOf(b.match));
                 setRows(formattedRows);
-            })
-            .catch(() => setRows([]));
+            } catch {
+                setRows([]);
+            }
+        }
+
+        fetchInstagramData();
+        fetchPrizeTiers();
     }, []);
+
+    const formatDate = (dateStr) => {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString(undefined, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    };
 
     const highlightNumbers = (text) => {
         return text.split(/(\d+(?:\/\d+)?(?:\s?Kg|\s?kg|\s?%|\s?Year|\s?Years|\s?Rs|\s?₹)?)/g).map((part, idx) => {
@@ -45,7 +72,7 @@ export default function TierPrizes() {
     };
 
     return (
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <section className="relative pt-6 flex items-center justify-center overflow-hidden">
             {/* Background */}
             <div className="absolute inset-0">
                 <div className="absolute inset-0 bg-[#FFF7ED]"></div>
@@ -53,7 +80,7 @@ export default function TierPrizes() {
             </div>
 
             <div className="container mx-auto px-4 py-10 md:py-20 relative z-10">
-                <div className="max-w-6xl mx-auto text-center mb-16 animate-fade-in">
+                {/* <div className="max-w-6xl mx-auto text-center mb-16 animate-fade-in">
                     <p className="text-xs md:text-sm uppercase tracking-wider text-[#6B4F3F] mb-4 flex items-center justify-center">
                         <Star className="h-4 w-4 mr-2 text-[#D4AF37]" />
                         FROM GRAINS TO GAINS
@@ -70,7 +97,63 @@ export default function TierPrizes() {
                     <p className="text-base md:text-lg text-[#5F4C42] max-w-3xl mx-auto leading-normal md:leading-relaxed">
                         Join thousands of winners who have transformed their lives with our premium lottery experience. Every ticket is a chance to make your dreams come true.
                     </p>
-                </div>
+                </div> */}
+
+                {/* 🎯 Display Dates */}
+                {(dates.startDate || dates.revealDate || dates.endDate) && (
+                    <div className="w-full max-w-4xl mx-auto mb-10">
+                        <div
+                            className="bg-[#FFFFFF] rounded-[6px] px-6 py-4 shadow-sm"
+                            style={{ fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}
+                        >
+                            <div className="flex flex-col md:flex-row md:items-center md:justify-between relative">
+                                {[
+                                    dates.startDate && {
+                                        title: 'Ticketing Opens',
+                                        date: formatDate(dates.startDate),
+                                    },
+                                    dates.revealDate && {
+                                        title: 'Number Revealing Start',
+                                        date: formatDate(dates.revealDate),
+                                    },
+                                    dates.endDate && {
+                                        title: 'Ticketing Closes',
+                                        date: formatDate(dates.endDate),
+                                    },
+                                ]
+                                    .filter(Boolean)
+                                    .map((milestone, index, arr) => (
+                                        <React.Fragment key={index}>
+                                            <div className="flex-1 flex flex-col items-center text-center px-2 py-4 md:py-0">
+                                                <div
+                                                    className="text-[#000000] text-[14px] mb-2 font-medium text-sm md:text-base"
+                                                    style={{ fontWeight: 700 }}
+                                                >
+                                                    {milestone.title}
+                                                </div>
+                                                <div
+                                                    className="bg-[#84282D26] text-[#84282D] px-4 h-[24px] text-[12px] flex items-center justify-center rounded-[4px] font-bold text-sm whitespace-nowrap"
+                                                    style={{ fontWeight: 700 }}
+                                                >
+                                                    {milestone.date}
+                                                </div>
+                                            </div>
+
+                                            {/* Divider: horizontal on mobile, vertical on md+ */}
+                                            {index < arr.length - 1 && (
+                                                <div className="w-full h-px bg-gray-300 my-2 md:my-0 md:w-px md:h-12 md:mx-4"></div>
+                                            )}
+                                        </React.Fragment>
+                                    ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+
+
+
+
 
                 {/* Mobile View */}
                 <div className="md:hidden animate-slide-up w-full max-w-md mx-auto">
@@ -122,7 +205,7 @@ export default function TierPrizes() {
                                         <p className="text-xs text-gray-500">
                                             Super Ticket Prize{!isBonus && ' (Better Rewards)'}
                                         </p>
-                                        <p className={`text-sm font-medium ${isBonus ? 'text-green-800 italic' : 'text-green-800 italic'}`}>
+                                        <p className={`text-[1.03rem] text-sm font-medium ${isBonus ? 'text-green-800 ' : 'text-green-800'}`}>
                                             {highlightNumbers(row.super)}
                                         </p>
                                     </div>
@@ -189,11 +272,11 @@ export default function TierPrizes() {
                                                     <td className="py-4 px-4 text-[#2E7D32] font-semibold">{row.regular}</td>
                                                     <td className="py-4 px-4 text-[#2E7D32] font-semibold">
                                                         {isBonus ? (
-                                                            <span className="  px-3 py-1 rounded-full text-sm font-medium">
+                                                            <span className="text-[1.05rem]   py-1 rounded-full  font-medium">
                                                                 {highlightNumbers(row.super)}
                                                             </span>
                                                         ) : (
-                                                            highlightNumbers(row.super)
+                                                            <span className="text-[1.05rem]">{highlightNumbers(row.super)}</span>
                                                         )}
                                                     </td>
                                                 </tr>

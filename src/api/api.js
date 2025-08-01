@@ -150,9 +150,10 @@ export const getInstagramPostUrl = async () => {
         throw new Error(data.message || 'Failed to fetch Instagram URL');
     }
 
-    const { url, collectedAt } = data.data;
-    return { url, collectedAt };
+    const { url, startDate, revealDate, endDate } = data.data;
+    return { url, startDate, revealDate, endDate };
 };
+
 
 // ✅ Fetch ticket details by Ticket ID
 export const getTicketDetails = async (ticketID) => {

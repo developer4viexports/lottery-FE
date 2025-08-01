@@ -22,11 +22,11 @@ export default function Footer() {
                 <div>
                     <h3 className="text-lg font-semibold mb-3">Navigation</h3>
                     <ul className="space-y-2 text-sm">
-                        <li><a href="/winners" className="hover:text-orange-300 transition">Winners</a></li>
+                        <li><a href="https://shrilalmahal.org/" className="hover:text-orange-300 transition">Home</a></li>
                         <li>
                             <a
                                 href="https://shrilalmahal.org/about-us"
-                                target="_blank"
+                                // target="_blank"
                                 rel="noopener noreferrer"
                                 className="hover:text-orange-300 transition"
                             >
@@ -34,8 +34,8 @@ export default function Footer() {
                             </a>
                         </li>
 
-                        <li><a href="/contact" className="hover:text-orange-300 transition">Contact</a></li>
-                        <li><a href="/help" className="hover:text-orange-300 transition">Help</a></li>
+                        <li><a href="https://shrilalmahal.org/contact-us" className="hover:text-orange-300 transition">Contact Us</a></li>
+                        <li><a href="https://shrilalmahal.org/quality" className="hover:text-orange-300 transition">Quality</a></li>
                     </ul>
                 </div>
 
@@ -44,14 +44,23 @@ export default function Footer() {
                     <h3 className="text-lg font-semibold mb-3">Connect</h3>
                     <ul className="space-y-2 text-sm">
                         <li className="flex justify-center sm:justify-start items-center gap-2">
-                            <FaPhone className="text-orange-300" /> +91-9999-999999
+                            <FaPhone className="text-orange-300" /> +91 1142787700
                         </li>
                         <li className="flex justify-center sm:justify-start items-center gap-2">
-                            <FaEnvelope className="text-orange-300" /> support@shrilalmahal.com
+                            <FaEnvelope className="text-orange-300" />  exp@lalmahal.in
                         </li>
                         <li className="flex justify-center sm:justify-start items-center gap-2">
-                            <FaInstagram className="text-orange-300" /> @shrilalmahal
+                            <a
+                                href="https://instagram.com/shrilalmahalgroup"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 text-orange-300 hover:underline"
+                            >
+                                <FaInstagram />
+                                <span className="text-white">shrilalmahalgroup</span>
+                            </a>
                         </li>
+
                     </ul>
                 </div>
             </div>
