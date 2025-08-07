@@ -57,12 +57,24 @@ export default function AdminTable({ token }) {
 
     const getFileType = (url) => {
         if (!url) return '';
-        const ext = url.split('.').pop().toLowerCase();
-        if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) return 'image';
-        if (['mp4', 'webm', 'ogg'].includes(ext)) return 'video';
-        if (ext === 'pdf') return 'pdf';
-        return 'other';
+
+        try {
+            const decodedUrl = decodeURIComponent(url);  // decode things like %2F
+            const match = decodedUrl.match(/\.([a-zA-Z0-9]+)(\?|$)/);
+            const ext = match?.[1]?.toLowerCase();
+
+            if (!ext) return '';
+
+            if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) return 'image';
+            if (['mp4', 'webm', 'ogg'].includes(ext)) return 'video';
+            if (ext === 'pdf') return 'pdf';
+            return 'other';
+        } catch {
+            return '';
+        }
     };
+
+
 
     const handleFilter = () => {
         const from = fromDate ? new Date(fromDate) : null;
@@ -104,9 +116,10 @@ export default function AdminTable({ token }) {
             Issued: t.issueDate || '-',
             Expiry: t.expiryDate || '-',
             CreatedAt: formatDateTime(t.createdAt),
-            // ProofImageURL: t.proofImage ? FILE_BASE_URL + t.proofImage : '',
-            PurchaseProofURL: t.purchaseProof ? FILE_BASE_URL + t.purchaseProof : '',
-            TicketImageURL: t.ticketImage ? FILE_BASE_URL + t.ticketImage : ''
+            FollowImageURL: t.followProof || '',
+            PurchaseProofURL: t.purchaseProof || '',
+            TicketImageURL: t.ticketImage || ''
+
         }));
 
         const ws = XLSX.utils.json_to_sheet(formatted);
@@ -131,20 +144,34 @@ export default function AdminTable({ token }) {
                             {(() => {
                                 const type = getFileType(previewUrl);
                                 if (type === 'image') {
-                                    return <img src={previewUrl} alt="Preview" className="max-h-full max-w-full rounded shadow" />;
+                                    return (
+                                        <img
+                                            src={previewUrl}
+                                            alt="Preview"
+                                            className="max-h-full max-w-full rounded shadow"
+                                            onError={() => console.error("❌ Failed to load image:", previewUrl)}
+                                        />
+                                    );
                                 } else if (type === 'video') {
                                     return (
                                         <video controls className="max-h-full max-w-full rounded shadow">
-                                            <source src={previewUrl} />
+                                            <source src={previewUrl} type="video/mp4" />
                                             Your browser does not support the video tag.
                                         </video>
                                     );
                                 } else if (type === 'pdf') {
-                                    return <iframe src={previewUrl} className="w-full h-full rounded" />;
+                                    return (
+                                        <iframe
+                                            src={previewUrl}
+                                            className="w-full h-full rounded"
+                                            onError={() => console.error("❌ Failed to load PDF:", previewUrl)}
+                                        />
+                                    );
                                 } else {
                                     return <p className="text-gray-600">Preview not supported for this file type.</p>;
                                 }
                             })()}
+
                         </div>
                         <div className="mt-4 text-right">
                             <a
@@ -235,7 +262,8 @@ export default function AdminTable({ token }) {
                                     <td key={j} className="p-2 border">
                                         {t[key] ? (
                                             <button
-                                                onClick={() => setPreviewUrl(FILE_BASE_URL + t[key])}
+                                                onClick={() => setPreviewUrl(t[key])}
+
                                                 className="text-blue-600 underline hover:text-blue-800"
                                             >
                                                 View
@@ -250,7 +278,8 @@ export default function AdminTable({ token }) {
                                 <td className="p-2 border">
                                     {t.ticketImage ? (
                                         <button
-                                            onClick={() => setPreviewUrl(FILE_BASE_URL + t.ticketImage)}
+                                            onClick={() => setPreviewUrl(t.ticketImage)}
+
                                             className="text-blue-600 underline hover:text-blue-800"
                                         >
                                             View

@@ -69,6 +69,7 @@ export default function ClaimTable({ token }) {
             Phone: c.phone,
             Instagram: c.instagram,
             TicketID: c.ticketID,
+            Address: c.address,
             Numbers: Array.isArray(c.numbers) ? c.numbers.join(', ') : '',
             CreatedAt: formatDateTime(c.createdAt),
         }));

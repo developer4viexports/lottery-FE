@@ -43,12 +43,24 @@ export default function ActivateAdminTable({ token }) {
 
     const getFileType = (url) => {
         if (!url) return '';
-        const ext = url.split('.').pop().toLowerCase();
-        if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) return 'image';
-        if (['mp4', 'webm', 'ogg'].includes(ext)) return 'video';
-        if (ext === 'pdf') return 'pdf';
-        return 'other';
+
+        try {
+            const decodedUrl = decodeURIComponent(url);  // decode things like %2F
+            const match = decodedUrl.match(/\.([a-zA-Z0-9]+)(\?|$)/);
+            const ext = match?.[1]?.toLowerCase();
+
+            if (!ext) return '';
+
+            if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) return 'image';
+            if (['mp4', 'webm', 'ogg'].includes(ext)) return 'video';
+            if (ext === 'pdf') return 'pdf';
+            return 'other';
+        } catch {
+            return '';
+        }
     };
+
+
 
     const handleFilter = () => {
         const from = fromDate ? new Date(fromDate) : null;
@@ -87,8 +99,8 @@ export default function ActivateAdminTable({ token }) {
             Phone: c.phone,
             CountryCode: c.countryCode,
             Instagram: c.instagram,
-            // TicketImageURL: c.ticketImage ? FILE_BASE_URL + c.ticketImage : '',
-            ProofImageURL: c.proofImage ? FILE_BASE_URL + c.proofImage : '',
+            StoryImageURL: c.ticketImage || '',
+            CommentImageURL: c.proofImage || '',
             SubmittedAt: formatDateTime(c.createdAt),
         }));
 
@@ -220,7 +232,7 @@ export default function ActivateAdminTable({ token }) {
                                 <td className="p-2 border">
                                     {c.ticketImage ? (
                                         <button
-                                            onClick={() => setPreviewUrl(FILE_BASE_URL + c.ticketImage)}
+                                            onClick={() => setPreviewUrl(c.ticketImage)}
                                             className="text-blue-600 underline hover:text-blue-800"
                                         >
                                             View
@@ -232,7 +244,7 @@ export default function ActivateAdminTable({ token }) {
                                 <td className="p-2 border">
                                     {c.proofImage ? (
                                         <button
-                                            onClick={() => setPreviewUrl(FILE_BASE_URL + c.proofImage)}
+                                            onClick={() => setPreviewUrl(c.proofImage)}
                                             className="text-blue-600 underline hover:text-blue-800"
                                         >
                                             View

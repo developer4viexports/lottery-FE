@@ -50,8 +50,8 @@ export default function TicketPreview({ data }) {
 
                         uploadTicketImage(data.id, canvas)
                             .then(async () => {
-                                const result = await sendTicketEmail(data.id);
-                                console.log('📧 Email sent:', result.message);
+                                // const result = await sendTicketEmail(data.id);
+                                // console.log('📧 Email sent:', result.message);
                             })
                             .catch(err => console.error('❌ Upload failed:', err));
                     };

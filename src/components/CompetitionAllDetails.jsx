@@ -30,6 +30,19 @@ export default function CompetitionAllDetails() {
         });
     };
 
+    const getFileType = (url) => {
+        if (!url) return '';
+        try {
+            const ext = decodeURIComponent(url).split('.').pop().split('?')[0].toLowerCase();
+            if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) return 'image';
+            if (['mp4', 'webm', 'ogg'].includes(ext)) return 'video';
+            if (ext === 'pdf') return 'pdf';
+            return 'other';
+        } catch {
+            return '';
+        }
+    };
+
     useEffect(() => {
         const fetchDetails = async () => {
             const token = localStorage.getItem('adminToken');
@@ -108,9 +121,9 @@ export default function CompetitionAllDetails() {
                 Prize: item.prizeType || '-',
                 Issued: item.issueDate || '-',
                 Expiry: item.expiryDate || '-',
-                FollowProof: item.followProof ? BASE_URL + item.followProof : '',
-                PurchaseProof: item.purchaseProof ? BASE_URL + item.purchaseProof : '',
-                TicketImageURL: item.ticketImage ? BASE_URL + item.ticketImage : '',
+                FollowProof: item.followProof || '',
+                PurchaseProof: item.purchaseProof || '',
+                TicketImageURL: item.ticketImage || '',
             }));
         } else if (type === 'activates') {
             formatted = filteredActivates.map((item, i) => ({
@@ -119,10 +132,10 @@ export default function CompetitionAllDetails() {
                 Name: item.name,
                 Email: item.email,
                 Phone: item.phone,
-                CountryCode: item.countryCode,
+                // CountryCode: item.countryCode,
                 Instagram: item.instagram,
-                TicketImageURL: item.ticketImage ? BASE_URL + item.ticketImage : '',
-                ProofImageURL: item.proofImage ? BASE_URL + item.proofImage : '',
+                StoryImageURL: item.ticketImage || '',
+                CommentImageURL: item.proofImage || '',
                 SubmittedAt: item.createdAt
             }));
         } else {
@@ -133,6 +146,7 @@ export default function CompetitionAllDetails() {
                 Email: item.email,
                 Phone: item.phone,
                 Instagram: item.instagram,
+                Address: item.address || '',
                 Numbers: item.numbers?.join(' '),
                 SubmittedAt: item.createdAt
             }));
@@ -214,14 +228,14 @@ export default function CompetitionAllDetails() {
                                         {['followProof', 'purchaseProof'].map((key, j) => (
                                             <td key={j} className="p-2 border">
                                                 {ticket[key] ? (
-                                                    <button onClick={() => setPreviewUrl(BASE_URL + ticket[key])} className="text-blue-600 underline hover:text-blue-800">View</button>
+                                                    <button onClick={() => setPreviewUrl(ticket[key])} className="text-blue-600 underline hover:text-blue-800">View</button>
                                                 ) : (
                                                     <span className="text-gray-400 italic">No file</span>
                                                 )}
                                             </td>
                                         ))}
                                         <td className="p-2 border">{ticket.ticketImage ? (
-                                            <button onClick={() => setPreviewUrl(BASE_URL + ticket.ticketImage)} className="text-blue-600 underline hover:text-blue-800">View</button>
+                                            <button onClick={() => setPreviewUrl(ticket.ticketImage)} className="text-blue-600 underline hover:text-blue-800">View</button>
                                         ) : <span className="text-gray-400 italic">No image</span>}</td>
                                         <td className="p-2 border">{formatDateTime(ticket.createdAt)}</td>
                                     </tr>
@@ -254,8 +268,8 @@ export default function CompetitionAllDetails() {
                                         <td className="p-2 border">{item.email}</td>
                                         <td className="p-2 border">{item.phone}</td>
                                         {/* <td className="p-2 border">{item.instagram}</td> */}
-                                        <td className="p-2 border">{item.proofImage ? <button onClick={() => setPreviewUrl(BASE_URL + item.ticketImage)} className="text-blue-600 underline hover:text-blue-800">View</button> : <span className="text-gray-400 italic">No file</span>}</td>
-                                        <td className="p-2 border">{item.proofImage ? <button onClick={() => setPreviewUrl(BASE_URL + item.proofImage)} className="text-blue-600 underline hover:text-blue-800">View</button> : <span className="text-gray-400 italic">No file</span>}</td>
+                                        <td className="p-2 border">{item.proofImage ? <button onClick={() => setPreviewUrl(item.ticketImage)} className="text-blue-600 underline hover:text-blue-800">View</button> : <span className="text-gray-400 italic">No file</span>}</td>
+                                        <td className="p-2 border">{item.proofImage ? <button onClick={() => setPreviewUrl(item.proofImage)} className="text-blue-600 underline hover:text-blue-800">View</button> : <span className="text-gray-400 italic">No file</span>}</td>
                                         <td className="p-2 border">{formatDateTime(item.createdAt)}</td>
                                     </tr>
                                 ))}
@@ -304,17 +318,21 @@ export default function CompetitionAllDetails() {
                         <button onClick={() => setPreviewUrl(null)} className="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-xl">×</button>
                         <div className="h-96 flex justify-center items-center">
                             {(() => {
-                                const type = previewUrl.split('.').pop().toLowerCase();
-                                if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(type)) {
+                                const type = getFileType(previewUrl);
+                                if (type === 'image') {
                                     return <img src={previewUrl} alt="Preview" className="max-h-full max-w-full rounded shadow" />;
-                                } else if (['mp4', 'webm', 'ogg'].includes(type)) {
-                                    return <video controls className="max-h-full max-w-full rounded shadow"><source src={previewUrl} />Your browser does not support the video tag.</video>;
+                                } else if (type === 'video') {
+                                    return <video controls className="max-h-full max-w-full rounded shadow">
+                                        <source src={previewUrl} />
+                                        Your browser does not support the video tag.
+                                    </video>;
                                 } else if (type === 'pdf') {
                                     return <iframe src={previewUrl} className="w-full h-full rounded" />;
                                 } else {
                                     return <p className="text-gray-600">Preview not supported for this file type.</p>;
                                 }
                             })()}
+
                         </div>
                         <div className="mt-4 text-right">
                             <a href={previewUrl} download target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Download</a>
