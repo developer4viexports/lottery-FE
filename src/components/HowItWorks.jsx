@@ -4,7 +4,7 @@ import { Star, Trophy, Crown } from 'lucide-react';
 
 function FeatureCard({ icon, title, description, iconBgColor }) {
     return (
-        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 p-4 bg-white dark:bg-gray-900 rounded-lg shadow-sm hover:shadow-md transition min-h-[80px]">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition min-h-[80px]">
             {/* Icon circle */}
             <div
                 className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
@@ -57,7 +57,7 @@ export default function HowItWorks() {
     ];
 
     return (
-        <section className="w-full  min-h-screen bg-white pb-12">
+        <section className="w-full min-h-[50vh] md:min-h-screen bg-white pb-12">
             <div className=" mx-auto text-center mb-16 animate-fade-in pt-12">
                 <p className="text-xs md:text-sm uppercase tracking-wider text-[#6B4F3F] mb-4 flex items-center justify-center">
                     <Star className="h-4 w-4 mr-2 text-[#D4AF37]" />

@@ -16,6 +16,7 @@ export default function ActivateForm({ onSubmitted, instaUrl }) {
         ticketImage: null, // <-- updated from ticketImage
         proofImage: null,
     });
+    const [resetKey, setResetKey] = useState(0); // Key to force file input reset
 
     useEffect(() => {
         const fetchTicketDetails = async () => {
@@ -35,7 +36,12 @@ export default function ActivateForm({ onSubmitted, instaUrl }) {
             }
         };
 
-        fetchTicketDetails();
+        // Debounce API calls to avoid excessive requests
+        const timeoutId = setTimeout(() => {
+            fetchTicketDetails();
+        }, 500); // Wait 500ms after user stops typing
+
+        return () => clearTimeout(timeoutId);
     }, [form.ticketID]);
 
     const [contactValue, setContactValue] = useState('');
@@ -132,6 +138,19 @@ export default function ActivateForm({ onSubmitted, instaUrl }) {
             await submitActivate(formData);
             toast.success('🎉 Ticket activated successfully!');
             setSubmitted(true);
+            
+            // Reset form fields after successful submission
+            setForm({
+                ticketID: '',
+                name: '',
+                instagram: '',
+                ticketImage: null,
+                proofImage: null,
+            });
+            setContactValue('');
+            setErrors({});
+            setResetKey(prev => prev + 1); // Force file inputs to reset by changing key
+            
             onSubmitted?.();
         } catch (error) {
             const resData = error?.response;
@@ -226,6 +245,7 @@ export default function ActivateForm({ onSubmitted, instaUrl }) {
                     </div> */}
 
                     <FileInputField
+                        key={`proofImage-${resetKey}`} // Force reset with key change
                         name="proofImage"
                         placeholder="Comment Proof"
                         icon={<FaUpload />}
@@ -235,6 +255,7 @@ export default function ActivateForm({ onSubmitted, instaUrl }) {
                     />
 
                     <FileInputField
+                        key={`ticketImage-${resetKey}`} // Force reset with key change
                         name="ticketImage"
                         placeholder="Story Proof"
                         icon={<FaUpload />}

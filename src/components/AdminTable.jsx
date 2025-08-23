@@ -1,5 +1,5 @@
 // src/components/AdminTable.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import * as XLSX from 'xlsx';
 
 export default function AdminTable({ token }) {
@@ -9,38 +9,64 @@ export default function AdminTable({ token }) {
     const [toDate, setToDate] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [previewUrl, setPreviewUrl] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pagination, setPagination] = useState({});
+    const [loading, setLoading] = useState(false);
 
     const FILE_BASE_URL = 'https://api.lottery.tenderbaba.com';
 
-    useEffect(() => {
-        const fetchTickets = async () => {
-            try {
-                const res = await fetch(`${FILE_BASE_URL}/api/admin/tickets`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                const data = await res.json();
-                if (!data.success) throw new Error(data.message || 'Unauthorized');
-                setTickets(data.data);
-                setFilteredTickets(data.data);
-            } catch (error) {
-                alert('Failed to load tickets: ' + error.message);
-            }
-        };
-        if (token) fetchTickets();
+    const fetchTickets = useCallback(async (page = 1, limit = 50) => {
+        if (!token) return;
+
+        setLoading(true);
+        try {
+            const res = await fetch(`${FILE_BASE_URL}/api/admin/tickets?page=${page}&limit=${limit}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.message || 'Unauthorized');
+
+            setTickets(data.data);
+            setFilteredTickets(data.data);
+            setPagination(data.pagination);
+            setCurrentPage(page);
+        } catch (error) {
+            alert('Failed to load tickets: ' + error.message);
+        } finally {
+            setLoading(false);
+        }
     }, [token]);
 
-    const parseNumbers = (nums) => {
-        try {
-            if (Array.isArray(nums)) return nums;
-            if (typeof nums === 'string') {
-                const parsed = JSON.parse(nums);
-                return Array.isArray(parsed) ? parsed : [parsed];
+    useEffect(() => {
+        fetchTickets(1);
+    }, [fetchTickets]);
+
+    // Memoized parseNumbers function to avoid repeated parsing
+    const parseNumbers = useMemo(() => {
+        const cache = new Map();
+        return (nums) => {
+            const key = JSON.stringify(nums);
+            if (cache.has(key)) return cache.get(key);
+
+            try {
+                let result;
+                if (Array.isArray(nums)) {
+                    result = nums;
+                } else if (typeof nums === 'string') {
+                    const parsed = JSON.parse(nums);
+                    result = Array.isArray(parsed) ? parsed : [parsed];
+                } else {
+                    result = [];
+                }
+                cache.set(key, result);
+                return result;
+            } catch {
+                const fallback = [];
+                cache.set(key, fallback);
+                return fallback;
             }
-            return [];
-        } catch {
-            return [];
-        }
-    };
+        };
+    }, []);
 
     const formatDateTime = (isoString) => {
         if (!isoString) return '';
@@ -76,32 +102,39 @@ export default function AdminTable({ token }) {
 
 
 
-    const handleFilter = () => {
+    // Optimized filtering with memoization
+    const filteredTicketsData = useMemo(() => {
         const from = fromDate ? new Date(fromDate) : null;
         const to = toDate ? new Date(toDate) : null;
+        const searchLower = searchTerm.toLowerCase();
 
-        const filtered = tickets.filter(ticket => {
+        return tickets.filter(ticket => {
+            // Date filtering
             const created = new Date(ticket.createdAt);
             if (from && created < from) return false;
             if (to && created > to) return false;
 
-            const combined = (
-                ticket.name +
-                ticket.email +
-                ticket.phone +
-                ticket.ticketID +
-                parseNumbers(ticket.numbers).join('')
-            ).toLowerCase();
+            // Search filtering - only if there's a search term
+            if (searchTerm) {
+                const combined = (
+                    ticket.name +
+                    ticket.email +
+                    ticket.phone +
+                    ticket.ticketID +
+                    parseNumbers(ticket.numbers).join('')
+                ).toLowerCase();
 
-            return combined.includes(searchTerm.toLowerCase());
+                return combined.includes(searchLower);
+            }
+
+            return true;
         });
+    }, [tickets, fromDate, toDate, searchTerm, parseNumbers]);
 
-        setFilteredTickets(filtered);
-    };
-
+    // Update filtered tickets when data changes
     useEffect(() => {
-        handleFilter();
-    }, [searchTerm, fromDate, toDate]);
+        setFilteredTickets(filteredTicketsData);
+    }, [filteredTicketsData]);
 
     const downloadExcel = () => {
         const formatted = filteredTickets.map((t, i) => ({
@@ -295,6 +328,60 @@ export default function AdminTable({ token }) {
                     </tbody>
 
                 </table>
+
+                {/* Loading state */}
+                {loading && (
+                    <div className="flex justify-center items-center p-8">
+                        <div className="text-lg text-gray-600">Loading tickets...</div>
+                    </div>
+                )}
+
+                {/* Pagination Controls */}
+                {pagination.totalPages > 1 && (
+                    <div className="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div className="text-sm text-gray-600">
+                            Showing page {pagination.currentPage} of {pagination.totalPages}
+                            ({pagination.totalTickets} total tickets)
+                        </div>
+
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => fetchTickets(currentPage - 1)}
+                                disabled={!pagination.hasPrevPage}
+                                className="px-3 py-2 text-sm border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                            >
+                                Previous
+                            </button>
+
+                            {/* Page numbers */}
+                            {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                                const pageNum = Math.max(1, currentPage - 2) + i;
+                                if (pageNum > pagination.totalPages) return null;
+
+                                return (
+                                    <button
+                                        key={pageNum}
+                                        onClick={() => fetchTickets(pageNum)}
+                                        className={`px-3 py-2 text-sm border rounded-lg ${pageNum === currentPage
+                                            ? 'bg-blue-500 text-white border-blue-500'
+                                            : 'hover:bg-gray-50'
+                                            }`}
+                                    >
+                                        {pageNum}
+                                    </button>
+                                );
+                            })}
+
+                            <button
+                                onClick={() => fetchTickets(currentPage + 1)}
+                                disabled={!pagination.hasNextPage}
+                                className="px-3 py-2 text-sm border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
