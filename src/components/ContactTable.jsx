@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getContactMessages } from '../api/api';
+import { getContactMessages, FILE_BASE_URL } from '../api/api';
 import { FaFilePdf, FaImage, FaVideo } from 'react-icons/fa';
 
 export default function ContactTable({ token }) {
@@ -7,8 +7,6 @@ export default function ContactTable({ token }) {
     const [loading, setLoading] = useState(true);
     const [selectedMessage, setSelectedMessage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
-
-    const FILE_BASE_URL = 'https://api.lottery.tenderbaba.com';
 
     useEffect(() => {
         getContactMessages(token)

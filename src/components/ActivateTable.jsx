@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
+import { FILE_BASE_URL } from '../api/api';
 
 export default function ActivateAdminTable({ token }) {
     const [claims, setClaims] = useState([]);
@@ -8,8 +9,6 @@ export default function ActivateAdminTable({ token }) {
     const [toDate, setToDate] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [previewUrl, setPreviewUrl] = useState(null);
-
-    const FILE_BASE_URL = 'https://api.lottery.tenderbaba.com';
 
     useEffect(() => {
         const fetchClaims = async () => {

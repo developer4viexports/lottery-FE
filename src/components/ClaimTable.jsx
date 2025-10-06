@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
-
-const FILE_BASE_URL = 'https://api.lottery.tenderbaba.com';
+import { FILE_BASE_URL } from '../api/api';
 
 export default function ClaimTable({ token }) {
     const [claims, setClaims] = useState([]);

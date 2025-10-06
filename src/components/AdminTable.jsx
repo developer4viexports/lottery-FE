@@ -1,6 +1,7 @@
 // src/components/AdminTable.jsx
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import * as XLSX from 'xlsx';
+import { FILE_BASE_URL } from '../api/api';
 
 export default function AdminTable({ token }) {
     const [tickets, setTickets] = useState([]);
@@ -12,8 +13,6 @@ export default function AdminTable({ token }) {
     const [currentPage, setCurrentPage] = useState(1);
     const [pagination, setPagination] = useState({});
     const [loading, setLoading] = useState(false);
-
-    const FILE_BASE_URL = 'https://api.lottery.tenderbaba.com';
 
     const fetchTickets = useCallback(async (page = 1, limit = 50) => {
         if (!token) return;
