@@ -1,5 +1,5 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
-export const FILE_BASE_URL = import.meta.env.VITE_FILE_BASE_URL || 'http://localhost:5000';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.lottery.tenderbaba.com/api';
+export const FILE_BASE_URL = import.meta.env.VITE_FILE_BASE_URL || 'https://api.lottery.tenderbaba.com';
 
 export const submitTicket = async (formData) => {
     const res = await fetch(`${BASE_URL}/tickets/tickets`, {
