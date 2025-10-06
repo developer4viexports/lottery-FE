@@ -16,7 +16,7 @@ export default function AdminUrlDateEditor({ token }) {
     const fetchUrlData = async () => {
         try {
             setLoading(true);
-            const res = await fetch(`${BASE_URL}/api/url-date`, {
+            const res = await fetch(`${BASE_URL}/url-date`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const data = await res.json();
@@ -59,7 +59,7 @@ export default function AdminUrlDateEditor({ token }) {
                 endDate: form.endDate,
             };
 
-            const res = await fetch(`${BASE_URL}/api/url-date`, {
+            const res = await fetch(`${BASE_URL}/url-date`, {
                 method,
                 headers: {
                     'Content-Type': 'application/json',

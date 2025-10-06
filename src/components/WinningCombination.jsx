@@ -40,10 +40,10 @@ export default function WinningCombination({ token }) {
         try {
             setLoading(true);
             const [comboRes, winnersRes] = await Promise.all([
-                fetch(`${BASE_URL}/api/winning-combo/latest`, {
+                fetch(`${BASE_URL}/winning-combo/latest`, {
                     headers: { Authorization: `Bearer ${token}` }
                 }),
-                fetch(`${BASE_URL}/api/winning-combo/winners`, {
+                fetch(`${BASE_URL}/winning-combo/winners`, {
                     headers: { Authorization: `Bearer ${token}` }
                 })
             ]);
@@ -102,7 +102,7 @@ export default function WinningCombination({ token }) {
                 ? currentCombination.numbers
                 : generateTicketNumbers();
 
-            const res = await fetch(`${BASE_URL}/api/winning-combo`, {
+            const res = await fetch(`${BASE_URL}/winning-combo`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ export default function WinningCombination({ token }) {
         if (!window.confirm('End this competition manually?')) return;
         setLoading(true);
         try {
-            const res = await fetch(`${BASE_URL}/api/winning-combo/end`, {
+            const res = await fetch(`${BASE_URL}/winning-combo/end`, {
                 method: 'PATCH',
                 headers: { Authorization: `Bearer ${token}` }
             });

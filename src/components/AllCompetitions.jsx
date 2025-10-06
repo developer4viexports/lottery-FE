@@ -15,7 +15,7 @@ export default function AllCompetitions({ token }) {
     const fetchCompetitions = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`${BASE_URL}/api/winning-combo/all`, {
+            const res = await fetch(`${BASE_URL}/winning-combo/all`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const data = await res.json();
@@ -31,7 +31,7 @@ export default function AllCompetitions({ token }) {
     const fetchDetails = async (id) => {
         // This will be removed because we are now using navigation
         try {
-            const res = await fetch(`${BASE_URL}/api/winning-combo/${id}`, {
+            const res = await fetch(`${BASE_URL}/winning-combo/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const data = await res.json();

@@ -50,7 +50,7 @@ export default function CompetitionAllDetails() {
             if (!token) return setError('Not authorized');
 
             try {
-                const res = await fetch(`${BASE_URL}/api/winning-combo/${id}`, {
+                const res = await fetch(`${BASE_URL}/winning-combo/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const data = await res.json();
