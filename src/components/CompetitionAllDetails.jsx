@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import * as XLSX from 'xlsx';
+import { FILE_BASE_URL } from '../api/api';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
@@ -228,14 +229,14 @@ export default function CompetitionAllDetails() {
                                         {['followProof', 'purchaseProof'].map((key, j) => (
                                             <td key={j} className="p-2 border">
                                                 {ticket[key] ? (
-                                                    <button onClick={() => setPreviewUrl(ticket[key])} className="text-blue-600 underline hover:text-blue-800">View</button>
+                                                    <button onClick={() => setPreviewUrl(FILE_BASE_URL + ticket[key])} className="text-blue-600 underline hover:text-blue-800">View</button>
                                                 ) : (
                                                     <span className="text-gray-400 italic">No file</span>
                                                 )}
                                             </td>
                                         ))}
                                         <td className="p-2 border">{ticket.ticketImage ? (
-                                            <button onClick={() => setPreviewUrl(ticket.ticketImage)} className="text-blue-600 underline hover:text-blue-800">View</button>
+                                            <button onClick={() => setPreviewUrl(FILE_BASE_URL + ticket.ticketImage)} className="text-blue-600 underline hover:text-blue-800">View</button>
                                         ) : <span className="text-gray-400 italic">No image</span>}</td>
                                         <td className="p-2 border">{formatDateTime(ticket.createdAt)}</td>
                                     </tr>
@@ -268,8 +269,8 @@ export default function CompetitionAllDetails() {
                                         <td className="p-2 border">{item.email}</td>
                                         <td className="p-2 border">{item.phone}</td>
                                         {/* <td className="p-2 border">{item.instagram}</td> */}
-                                        <td className="p-2 border">{item.proofImage ? <button onClick={() => setPreviewUrl(item.ticketImage)} className="text-blue-600 underline hover:text-blue-800">View</button> : <span className="text-gray-400 italic">No file</span>}</td>
-                                        <td className="p-2 border">{item.proofImage ? <button onClick={() => setPreviewUrl(item.proofImage)} className="text-blue-600 underline hover:text-blue-800">View</button> : <span className="text-gray-400 italic">No file</span>}</td>
+                                        <td className="p-2 border">{item.ticketImage ? <button onClick={() => setPreviewUrl(FILE_BASE_URL + item.ticketImage)} className="text-blue-600 underline hover:text-blue-800">View</button> : <span className="text-gray-400 italic">No file</span>}</td>
+                                        <td className="p-2 border">{item.proofImage ? <button onClick={() => setPreviewUrl(FILE_BASE_URL + item.proofImage)} className="text-blue-600 underline hover:text-blue-800">View</button> : <span className="text-gray-400 italic">No file</span>}</td>
                                         <td className="p-2 border">{formatDateTime(item.createdAt)}</td>
                                     </tr>
                                 ))}

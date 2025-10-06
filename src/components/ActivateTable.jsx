@@ -231,7 +231,7 @@ export default function ActivateAdminTable({ token }) {
                                 <td className="p-2 border">
                                     {c.ticketImage ? (
                                         <button
-                                            onClick={() => setPreviewUrl(c.ticketImage)}
+                                            onClick={() => setPreviewUrl(FILE_BASE_URL + c.ticketImage)}
                                             className="text-blue-600 underline hover:text-blue-800"
                                         >
                                             View
@@ -243,7 +243,7 @@ export default function ActivateAdminTable({ token }) {
                                 <td className="p-2 border">
                                     {c.proofImage ? (
                                         <button
-                                            onClick={() => setPreviewUrl(c.proofImage)}
+                                            onClick={() => setPreviewUrl(FILE_BASE_URL + c.proofImage)}
                                             className="text-blue-600 underline hover:text-blue-800"
                                         >
                                             View

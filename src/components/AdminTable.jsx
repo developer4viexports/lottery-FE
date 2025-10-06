@@ -294,8 +294,7 @@ export default function AdminTable({ token }) {
                                     <td key={j} className="p-2 border">
                                         {t[key] ? (
                                             <button
-                                                onClick={() => setPreviewUrl(t[key])}
-
+                                                onClick={() => setPreviewUrl(FILE_BASE_URL + t[key])}
                                                 className="text-blue-600 underline hover:text-blue-800"
                                             >
                                                 View
@@ -310,8 +309,7 @@ export default function AdminTable({ token }) {
                                 <td className="p-2 border">
                                     {t.ticketImage ? (
                                         <button
-                                            onClick={() => setPreviewUrl(t.ticketImage)}
-
+                                            onClick={() => setPreviewUrl(FILE_BASE_URL + t.ticketImage)}
                                             className="text-blue-600 underline hover:text-blue-800"
                                         >
                                             View
