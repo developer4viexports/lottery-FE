@@ -14,7 +14,7 @@ export default function Header() {
                         <img
                             src={logo}
                             alt="Shrilalmahal Logo"
-                            className="h-12 w-auto object-contain"
+                            className="h-20 w-auto object-contain"
                         />
                     </a>
                 </div>

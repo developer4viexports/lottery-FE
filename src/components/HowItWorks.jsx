@@ -1,6 +1,5 @@
 import { FaTicketAlt, FaClock, FaTrophy } from 'react-icons/fa';
 import { HiOutlineSwitchHorizontal } from 'react-icons/hi';
-import { Star, Trophy, Crown } from 'lucide-react';
 
 function FeatureCard({ icon, title, description, iconBgColor }) {
     return (
@@ -59,11 +58,13 @@ export default function HowItWorks() {
     return (
         <section className="w-full min-h-[50vh] md:min-h-screen bg-white pb-12">
             <div className=" mx-auto text-center mb-16 animate-fade-in pt-12">
-                <p className="text-xs md:text-sm uppercase tracking-wider text-[#6B4F3F] mb-4 flex items-center justify-center">
-                    <Star className="h-4 w-4 mr-2 text-[#D4AF37]" />
-                    FROM GRAINS TO GAINS
-                    <Star className="h-4 w-4 ml-2 text-[#D4AF37]" />
-                </p>
+                <div className="flex items-center justify-center mb-4 ">
+                    <img
+                        src="/image/grain brown.png"
+                        alt="From Grains to Gains"
+                        className="h-32 md:h-32 object-contain"
+                    />
+                </div>
 
                 <h1 className="text-3xl md:text-5xl font-bold text-[#2D1F1F] leading-snug md:leading-tight mb-4 md:mb-6">
                     It's Your Lucky Chance To Win{" "}
