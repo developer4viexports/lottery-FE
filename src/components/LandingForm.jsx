@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import TicketPreview from './TicketPreview';
+import TicketLoader from './TicketLoader';
 import { submitTicket, getInstagramPostUrl } from '../api/api';
 import { FaUser, FaPhone, FaEnvelope, FaInstagram, FaUpload, FaCheckCircle, FaTimes } from 'react-icons/fa';
 import toast from 'react-hot-toast';
@@ -34,6 +35,7 @@ export default function LandingForm() {
     const [errors, setErrors] = useState({});
     const [ticket, setTicket] = useState(null);
     const [showModal, setShowModal] = useState(false); // for popup
+    const [isLoading, setIsLoading] = useState(false); // for loader
 
     const validate = () => {
         const errs = {};
@@ -88,14 +90,18 @@ export default function LandingForm() {
             formData.append('purchaseProof', form.purchaseProof);
         }
 
+        setIsLoading(true); // Show loader
+
         try {
             const response = await submitTicket(formData);
             if (response?.data) {
                 setTicket(response.data);
+                setIsLoading(false); // Hide loader
                 setShowModal(true);
             }
             setErrors({});
         } catch (err) {
+            setIsLoading(false); // Hide loader on error
             const resData = err?.response?.data;
 
             if (resData?.field && resData?.message) {
@@ -228,12 +234,16 @@ export default function LandingForm() {
 
                     <button
                         type="submit"
-                        className="w-full bg-[#84282D] hover:bg-gray-800 text-white font-semibold py-2 rounded-md transition duration-200"
+                        disabled={isLoading}
+                        className={`w-full bg-[#84282D] hover:bg-gray-800 text-white font-semibold py-2 rounded-md transition duration-200 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
                     >
-                        Generate {form.isSuperTicket ? 'SuperTicket' : 'Ticket'}
+                        {isLoading ? 'Generating...' : `Generate ${form.isSuperTicket ? 'SuperTicket' : 'Ticket'}`}
                     </button>
                 </form>
             </div>
+
+            {/* Ticket Generation Loader */}
+            <TicketLoader isVisible={isLoading} />
 
             {/* Modal Preview */}
             {showModal && (
